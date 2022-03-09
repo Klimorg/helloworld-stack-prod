@@ -1,0 +1,61 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.158.0/containers/docker-existing-dockerfile
+{
+  "name": "AI_segmentation_project",
+  // Sets the run context to one level up instead of the .devcontainer folder.
+  "context": "..",
+  // Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
+  "dockerFile": "../Dockerfile",
+  // Set *default* container specific settings.json values on container create.
+  "settings": {
+    "editor.rulers": [88, 120],
+    "editor.fontSize": 12,
+    "editor.bracketPairColorization.enabled": true,
+    "workbench.colorTheme": "One Dark Pro",
+    "workbench.colorCustomizations": {
+      "editorRuler.foreground": "#750917"
+    },
+    "terminal.integrated.profiles.linux": {
+      "bash (container default)": {
+        "path": "/bin/bash",
+        "overrideName": true
+      }
+    }
+  },
+  // Add the IDs of extensions you want installed when the container is created.
+  "extensions": [
+    "ms-python.python",
+    "ms-azuretools.vscode-docker",
+    "ms-toolsai.jupyter-renderers",
+    "eamodio.gitlens",
+    "esbenp.prettier-vscode",
+    "njpwerner.autodocstring",
+    "mechatroner.rainbow-csv",
+    "shardulm94.trailing-spaces",
+    "visualstudioexptteam.vscodeintellicode",
+    "redhat.vscode-yaml",
+    "zhuangtongfa.material-theme",
+    "coenraads.bracket-pair-colorizer-2",
+    "emmanuelbeziat.vscode-great-icons",
+    "zainchen.json",
+    "yzhang.markdown-all-in-one",
+    "mhutchie.git-graph",
+    "oderwat.indent-rainbow",
+    "saltud.type4py"
+  ],
+  //Use 'forwardPorts' to make a list of ports inside the container available locally.
+  "forwardPorts": [5000, 8001, 6006],
+  //The path of the workspace folder inside the container.
+  "workspaceFolder": "${localEnv:HOME}${localEnv:USERPROFILE}/template_segmentation",
+  // Uncomment the next line to run commands after the container is created - for example installing curl.
+  "postCreateCommand": "make install-dev",
+  // Uncomment when using a ptrace-based debugger like C++, Go, and Rust
+  "runArgs": ["-it", "--rm", "-P", "--runtime=nvidia"],
+  // Uncomment to use the Docker CLI from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
+  "mounts": [
+    "type=bind,source=${localWorkspaceFolder},target=${localEnv:HOME}${localEnv:USERPROFILE}/template_segmentation"
+  ]
+  // Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
+  //"remoteUser": "vorph"
+  // "--runtime=nvidia"
+}
