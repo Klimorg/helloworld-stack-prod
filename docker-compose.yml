@@ -8,6 +8,12 @@ services:
     restart: unless-stopped
     container_name: fastapi
     # restart: always
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=postgres
     labels:
       # Enable Traefik for this specific "backend" service
       # needed because of the `--providers.docker.exposedbydefault=false` command in the
@@ -47,8 +53,9 @@ services:
       # Use the public network created to be shared between Traefik and
       # any other service that needs to be publicly available with https
       - traefik-public
-    environment:
-      - DATABASE_URL=postgresql://fastapi_traefik:fastapi_traefik@db:5432/fastapi_traefik
+      - db-network
+    # environment:
+    #   - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
     depends_on:
       - db
 
@@ -59,10 +66,8 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     expose:
       - 5432
-    environment:
-      - POSTGRES_USER=fastapi_traefik
-      - POSTGRES_PASSWORD=fastapi_traefik
-      - POSTGRES_DB=fastapi_traefik
+    networks:
+      - db-network
 
   uptime-kuma:
     image: louislam/uptime-kuma
@@ -103,9 +108,10 @@ services:
 
 volumes:
   uptime-kuma:
+  postgres_data:
 
 networks:
   traefik-public:
     external: true
-
+  db-network:
 

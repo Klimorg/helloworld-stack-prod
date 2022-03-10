@@ -1,8 +1,8 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-
 from app.db import init_db
 from app.routes import inferences
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from loguru import logger
 
 app = FastAPI(
     title="Mathieu's Stack",
@@ -24,6 +24,7 @@ app.add_middleware(
 @app.on_event("startup")
 async def on_startup():
     await init_db()
+    logger.info("DB Init Done")
 
 
 @app.get("/")

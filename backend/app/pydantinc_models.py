@@ -5,7 +5,7 @@ from sqlmodel import Field, SQLModel
 
 class InferenceBase(SQLModel):
     inference_date: date
-    inference_time: time
+    # inference_time: time
     num_detections: int = Field(nullable=True)
     confidence: float = Field(ge=0.0, le=1.0)
 

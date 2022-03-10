@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 
-from app.db import get_session
-from app.pydantinc_models import InferenceCreate, InferenceRead, Inferences
+from ..db import get_session
+from ..pydantinc_models import InferenceCreate, InferenceRead, Inferences
 
 router = APIRouter()
 
