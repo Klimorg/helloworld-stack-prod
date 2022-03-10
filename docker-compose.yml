@@ -1,7 +1,10 @@
 services:
 
   backend:
-    build: ./
+    # build: ./
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
     restart: unless-stopped
     container_name: fastapi
     # restart: always
@@ -48,6 +51,7 @@ services:
 
   uptime-kuma:
     image: louislam/uptime-kuma
+    container_name: uptime_kuma
     labels:
         - traefik.enable=true
         - traefik.http.services.kuma.loadBalancer.server.port=3001
@@ -77,7 +81,6 @@ services:
         # Anything that happend to our app on HTTP will be redirect by the middlerware
         # above on HTTPS
         - traefik.http.routers.kuma-http.middlewares=https-redirect
-    container_name: uptime_kuma
     volumes:
       - uptime-kuma:/app/data
     networks:

@@ -4,6 +4,10 @@ services:
     ports:
       - 80:80
 
+  uptime-kuma:
+    ports:
+      - 3001:3001
+
 networks:
   traefik-public:
     external: false
