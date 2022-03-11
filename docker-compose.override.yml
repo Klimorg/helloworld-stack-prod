@@ -12,6 +12,10 @@ services:
     ports:
       - 5432:5432
 
+  db-monitoring:
+    ports:
+      - 5050:5050
+
 networks:
   traefik-public:
     external: false
