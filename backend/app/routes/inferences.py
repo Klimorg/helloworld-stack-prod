@@ -1,11 +1,8 @@
-from typing import List
-
-from fastapi import APIRouter, Depends, status
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, status
 from sqlmodel import select
 
-from ..db import get_session
-from ..pydantinc_models import InferenceCreate, InferenceRead, Inferences
+from ..db import Inferences
+from ..pydantinc_models import InferenceCreate, InferenceRead
 
 router = APIRouter()
 
@@ -17,12 +14,5 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED,
     summary="resume",
 )
-async def create_movie(
-    movie: InferenceCreate, session: AsyncSession = Depends(get_session)
-):
-    # with Session(db) as session:
-    db_inference = Inferences.from_orm(movie)
-    session.add(db_inference)
-    await session.commit()
-    await session.refresh(db_inference)
-    return db_inference
+async def create_inference(inference: InferenceCreate):
+    return await Inferences(**inference.dict()).save()

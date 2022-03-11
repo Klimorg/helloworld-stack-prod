@@ -1,4 +1,4 @@
-from app.db import init_db
+from app.db import Inferences, database
 from app.routes import inferences
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,9 +22,16 @@ app.add_middleware(
 
 
 @app.on_event("startup")
-async def on_startup():
-    await init_db()
-    logger.info("DB Init Done")
+async def startup():
+    if not database.is_connected:
+        await database.connect()
+    # create a dummy entry
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    if database.is_connected:
+        await database.disconnect()
 
 
 @app.get("/")

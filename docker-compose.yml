@@ -9,11 +9,13 @@ services:
     container_name: fastapi
     # restart: always
     environment:
+      - MAX_WORKERS=5
       - DB_USER=postgres
       - DB_PASSWORD=postgres
-      - DB_HOST=db
+      - DB_HOST=postgre_db
       - DB_PORT=5432
       - DB_NAME=postgres
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
     labels:
       # Enable Traefik for this specific "backend" service
       # needed because of the `--providers.docker.exposedbydefault=false` command in the
@@ -61,13 +63,16 @@ services:
 
   db:
     image: postgres:14.2-bullseye
-    container_name: postgre_db
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     expose:
       - 5432
     networks:
       - db-network
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
 
   uptime-kuma:
     image: louislam/uptime-kuma

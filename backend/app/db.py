@@ -1,21 +1,26 @@
-# from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
-from sqlmodel import SQLModel
-from sqlmodel.ext.asyncio.session import AsyncSession
+from datetime import date
+
+import databases
+import sqlalchemy
+from ormar import Date, Float, Integer, Model
 
 from .config import settings
 
-engine = create_async_engine(settings.async_db_uri, echo=True, future=True)
-print(f"DB URL {settings.async_db_uri}")
+database = databases.Database(settings.async_db_uri)
+metadata = sqlalchemy.MetaData()
 
 
-async def init_db():
-    async with engine.begin() as conn:
-        # await conn.run_sync(SQLModel.metadata.drop_all)
-        await conn.run_sync(SQLModel.metadata.create_all)
+class Inferences(Model):
+    class Meta:
+        metadata = metadata
+        database = database
+        tablename = "inferences"
+
+    id: int = Integer(primary_key=True)
+    inference_date: date = Date()
+    num_detections: int = Integer(minimum=0)
+    confidence: float = Float(minimum=0, maximum=1)
 
 
-async def get_session() -> AsyncSession:
-    async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-    async with async_session() as session:
-        yield session
+engine = sqlalchemy.create_engine(settings.async_db_uri)
+metadata.create_all(engine)
