@@ -9,10 +9,14 @@ services:
     container_name: fastapi
     # restart: always
     environment:
+      # asyncpg will try to set as many workers as possible but
+      # the default max_size of workers for postres is 10
+      # so should you get more than 10 workers, db will complain.
+      # https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/1
       - MAX_WORKERS=5
       - DB_USER=postgres
       - DB_PASSWORD=postgres
-      - DB_HOST=postgre_db
+      - DB_HOST=db
       - DB_PORT=5432
       - DB_NAME=postgres
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
@@ -63,6 +67,7 @@ services:
 
   db:
     image: postgres:14.2-bullseye
+    container_name: postgre
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     expose:

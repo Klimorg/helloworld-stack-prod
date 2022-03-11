@@ -1,6 +1,6 @@
-from app.db import Inferences, database
+from app.db import Healthcheck, database
 from app.routes import inferences
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
@@ -25,20 +25,42 @@ app.add_middleware(
 async def startup():
     if not database.is_connected:
         await database.connect()
+    logger.info("Connection to database enabled.")
     # create a dummy entry
+    await Healthcheck.objects.get_or_create(status="ok")
 
 
 @app.on_event("shutdown")
 async def shutdown():
     if database.is_connected:
         await database.disconnect()
+    logger.info("Connection to database disabled.")
 
 
-@app.get("/")
-def read_main():
-    return {"Hello world"}
+@app.get(
+    "/healthcheck",
+    tags=["healthcheck"],
+    status_code=status.HTTP_200_OK,
+    response_description="ok",
+    summary="resume",
+)
+def get_api_status() -> str:
+    return "ok"
 
 
-@app.get("/healthcheck")
-def get_api_status():
-    return {"Status": "ok"}
+@app.get(
+    "/healthcheck_db_link",
+    tags=["healthcheck"],
+    status_code=status.HTTP_200_OK,
+    response_description="ok",
+    summary="resume",
+)
+async def get_db_link_status() -> str:
+
+    try:
+        query = await Healthcheck.objects.get()
+        query = query.status
+    except ValueError:
+        query = "ko"
+
+    return query
