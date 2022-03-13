@@ -19,7 +19,8 @@ services:
       - DB_HOST=db
       - DB_PORT=5432
       - DB_NAME=postgres
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+      # - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
     labels:
       # Enable Traefik for this specific "backend" service
       # needed because of the `--providers.docker.exposedbydefault=false` command in the
@@ -94,68 +95,68 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=test
       - PGADMIN_LISTEN_PORT=5050
     labels:
-        - traefik.enable=true
-        - traefik.http.services.pgadmin.loadBalancer.server.port=5050
-        # HTTP
-        # Make Traefik use this domain in HTTP
-        # traefik.http.routers.{router-name-of-your-choice}.
-        # see https://doc.traefik.io/traefik/routing/providers/marathon/#routers
-        # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
-        # in the docker-compose.traefik.yml file
-        - traefik.http.routers.pgadmin-http.entrypoints=http
-        - traefik.http.routers.pgadmin-http.rule=Host(`pgadmin.mathieuklimczak.com`)
-        # Use the Traefik-public network (declared below)
-        - traefik.docker.network=traefik-public
-        # HTTPS
-        # Make Traefik use this domain in HTTPS
-        - traefik.http.routers.pgadmin-https.entrypoints=https
-        - traefik.http.routers.pgadmin-https.rule=Host(`pgadmin.mathieuklimczak.com`)
-        - traefik.http.routers.pgadmin-https.tls=true
-        # Use the "le" (Let's Encrypt) resolver
-        # Corresponds to the `--certificatesresolvers.le.*` commands in the
-        # docker-compose.traefik.yml file
-        - traefik.http.routers.pgadmin-https.tls.certresolver=le
-        # https-redirect middleware to redirect HTTP to HTTPS
-        - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
-        - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
-        # Middlerware to redirect HTTP to HTTPS
-        # Anything that happend to our app on HTTP will be redirect by the middlerware
-        # above on HTTPS
-        - traefik.http.routers.pgadmin-http.middlewares=https-redirect
+      - traefik.enable=true
+      - traefik.http.services.pgadmin.loadBalancer.server.port=5050
+      # HTTP
+      # Make Traefik use this domain in HTTP
+      # traefik.http.routers.{router-name-of-your-choice}.
+      # see https://doc.traefik.io/traefik/routing/providers/marathon/#routers
+      # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
+      # in the docker-compose.traefik.yml file
+      - traefik.http.routers.pgadmin-http.entrypoints=http
+      - traefik.http.routers.pgadmin-http.rule=Host(`pgadmin.mathieuklimczak.com`)
+      # Use the Traefik-public network (declared below)
+      - traefik.docker.network=traefik-public
+      # HTTPS
+      # Make Traefik use this domain in HTTPS
+      - traefik.http.routers.pgadmin-https.entrypoints=https
+      - traefik.http.routers.pgadmin-https.rule=Host(`pgadmin.mathieuklimczak.com`)
+      - traefik.http.routers.pgadmin-https.tls=true
+      # Use the "le" (Let's Encrypt) resolver
+      # Corresponds to the `--certificatesresolvers.le.*` commands in the
+      # docker-compose.traefik.yml file
+      - traefik.http.routers.pgadmin-https.tls.certresolver=le
+      # https-redirect middleware to redirect HTTP to HTTPS
+      - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
+      # Middlerware to redirect HTTP to HTTPS
+      # Anything that happend to our app on HTTP will be redirect by the middlerware
+      # above on HTTPS
+      - traefik.http.routers.pgadmin-http.middlewares=https-redirect
 
   uptime-kuma:
     image: louislam/uptime-kuma
     container_name: uptime_kuma
     restart: always
     labels:
-        - traefik.enable=true
-        - traefik.http.services.kuma.loadBalancer.server.port=3001
-        # HTTP
-        # Make Traefik use this domain in HTTP
-        # traefik.http.routers.{router-name-of-your-choice}.
-        # see https://doc.traefik.io/traefik/routing/providers/marathon/#routers
-        # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
-        # in the docker-compose.traefik.yml file
-        - traefik.http.routers.kuma-http.entrypoints=http
-        - traefik.http.routers.kuma-http.rule=Host(`kuma.mathieuklimczak.com`)
-        # Use the Traefik-public network (declared below)
-        - traefik.docker.network=traefik-public
-        # HTTPS
-        # Make Traefik use this domain in HTTPS
-        - traefik.http.routers.kuma-https.entrypoints=https
-        - traefik.http.routers.kuma-https.rule=Host(`kuma.mathieuklimczak.com`)
-        - traefik.http.routers.kuma-https.tls=true
-        # Use the "le" (Let's Encrypt) resolver
-        # Corresponds to the `--certificatesresolvers.le.*` commands in the
-        # docker-compose.traefik.yml file
-        - traefik.http.routers.kuma-https.tls.certresolver=le
-        # https-redirect middleware to redirect HTTP to HTTPS
-        - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
-        - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
-        # Middlerware to redirect HTTP to HTTPS
-        # Anything that happend to our app on HTTP will be redirect by the middlerware
-        # above on HTTPS
-        - traefik.http.routers.kuma-http.middlewares=https-redirect
+      - traefik.enable=true
+      - traefik.http.services.kuma.loadBalancer.server.port=3001
+      # HTTP
+      # Make Traefik use this domain in HTTP
+      # traefik.http.routers.{router-name-of-your-choice}.
+      # see https://doc.traefik.io/traefik/routing/providers/marathon/#routers
+      # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
+      # in the docker-compose.traefik.yml file
+      - traefik.http.routers.kuma-http.entrypoints=http
+      - traefik.http.routers.kuma-http.rule=Host(`kuma.mathieuklimczak.com`)
+      # Use the Traefik-public network (declared below)
+      - traefik.docker.network=traefik-public
+      # HTTPS
+      # Make Traefik use this domain in HTTPS
+      - traefik.http.routers.kuma-https.entrypoints=https
+      - traefik.http.routers.kuma-https.rule=Host(`kuma.mathieuklimczak.com`)
+      - traefik.http.routers.kuma-https.tls=true
+      # Use the "le" (Let's Encrypt) resolver
+      # Corresponds to the `--certificatesresolvers.le.*` commands in the
+      # docker-compose.traefik.yml file
+      - traefik.http.routers.kuma-https.tls.certresolver=le
+      # https-redirect middleware to redirect HTTP to HTTPS
+      - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
+      # Middlerware to redirect HTTP to HTTPS
+      # Anything that happend to our app on HTTP will be redirect by the middlerware
+      # above on HTTPS
+      - traefik.http.routers.kuma-http.middlewares=https-redirect
     volumes:
       - uptime-kuma:/app/data
     networks:

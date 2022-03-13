@@ -19,8 +19,8 @@
   "python.languageServer": "Pylance",
   "python.analysis.typeCheckingMode": "basic",
   "python.analysis.extraPaths": ["./src", "./model"],
-  "python.sortImports.path": "isort",
-  "python.sortImports.args": ["-sp setup.cfg"],
+  // "python.sortImports.path": "isort",
+  // "python.sortImports.args": ["-sp setup.cfg"],
   "[python]": {
     "editor.codeActionsOnSave": {
       "source.organizeImports": true

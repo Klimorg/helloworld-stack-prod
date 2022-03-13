@@ -1,0 +1,22 @@
+bandit==1.7.1
+# linting, formating, typing
+black==21.12b0
+# black formatting for jupyter notebooks
+black-nb==0.6
+darglint==1.8.1
+flake8==4.0.1
+isort==5.10.1
+mypy==0.931
+# requirements writing
+pipreqs==0.4.11
+# precommit action
+pre-commit==2.17.0
+# unit tests
+pytest==6.2.5
+pytest-cov==3.0.0
+pytest-xdist==2.5.0
+# code quality infos
+radon==4.5.0
+# refactoring
+rope==0.22.0
+wemake-python-styleguide==0.16.0

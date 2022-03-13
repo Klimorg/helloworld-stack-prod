@@ -27,5 +27,4 @@ async def create_inference(inference: InferenceCreate):
     summary="resume",
 )
 async def get_inference():
-    query = await Inferences.objects.all()
-    return query
+    return await Inferences.objects.all()
