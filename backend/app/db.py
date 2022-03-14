@@ -45,5 +45,5 @@ async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession
 
 async def init_models():
     async with engine.begin() as conn:
-        await conn.run_sync(metadata.drop_all)
+        # await conn.run_sync(metadata.drop_all)
         await conn.run_sync(metadata.create_all)

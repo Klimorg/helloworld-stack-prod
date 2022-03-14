@@ -1,0 +1,59 @@
+site_name: Production Stack Documentation
+site_author: Mathieu Klimczak
+theme:
+  name: material
+  logo: images/noun_Robot_1955251.svg
+  language: fr
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.top
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Basculer en mode sombre
+    - scheme: slate
+      primary: teal
+      accent: deep orange
+      toggle:
+        icon: material/toggle-switch
+        name: Basculer en mode clair
+
+
+
+plugins:
+  - search:
+      lang: fr
+  # - mknotebooks
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - Accueil: index.md
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - pymdownx.inlinehilite
+  - pymdownx.details
+  - pymdownx.superfences
+  - def_list
+  - attr_list
+  - pymdownx.highlight:
+      linenums: true
+  - pymdownx.betterem:
+      smart_enable: all
+  # config pour latex
+  - pymdownx.arithmatex:
+      generic: true
+
+
+# config pour latex
+extra_javascript:
+  - javascripts/config.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

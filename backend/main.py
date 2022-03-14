@@ -43,7 +43,7 @@ async def startup() -> None:
     database_ = app.state.database
     if not database_.is_connected:
         await database_.connect()
-    # await Healthcheck.objects.get_or_create(status="ok")
+    await Healthcheck.objects.get_or_create(status="ok")
 
 
 @app.on_event("shutdown")
