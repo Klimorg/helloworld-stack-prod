@@ -5,10 +5,21 @@ import sqlalchemy
 from ormar import Date, Float, Integer, Model, ModelMeta, String
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+from pydantic import PostgresDsn
 
 from .config import settings
 
-database = databases.Database(settings.async_db_uri)
+async_db_uri: str = PostgresDsn.build(
+    scheme="postgresql+asyncpg",
+    user=settings.db_user,
+    password=settings.db_pwd,
+    host=settings.db_host,
+    port=settings.db_port,
+    path=f"/{settings.db_name or ''}",
+)
+
+
+database = databases.Database(async_db_uri)
 metadata = sqlalchemy.MetaData()
 
 
@@ -37,10 +48,8 @@ class Healthcheck(Model):
     status: str = String(max_length=5)
 
 
-# engine = sqlalchemy.create_engine(settings.async_db_uri)
-engine = create_async_engine(settings.async_db_uri, future=True, echo=False)
+engine = create_async_engine(async_db_uri, future=True, echo=False)
 async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
-# metadata.create_all
 
 
 async def init_models():

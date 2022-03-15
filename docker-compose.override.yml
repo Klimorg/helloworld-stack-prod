@@ -3,6 +3,17 @@ services:
   backend:
     ports:
       - 80:80
+    environment:
+      # gunicorn will try to set as many workers as possible but
+      # the default max_size of workers for async postgres is 10
+      # so should you get more than 10 workers, db will complain.
+      # https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/1
+      - MAX_WORKERS=5
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=postgres
 
   uptime-kuma:
     ports:
@@ -11,10 +22,17 @@ services:
   db:
     ports:
       - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
 
   db-monitoring:
     ports:
       - 5050:5050
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=klimczak.mathieu@pm.me
+      - PGADMIN_DEFAULT_PASSWORD=test
 
 networks:
   traefik-public:

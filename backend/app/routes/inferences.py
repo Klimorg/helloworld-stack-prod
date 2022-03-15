@@ -23,7 +23,7 @@ async def create_inference(inference: InferenceCreate):
     "/",
     tags=["tags"],
     response_model=List[InferenceRead],
-    status_code=status.HTTP_201_CREATED,
+    status_code=status.HTTP_200_OK,
     summary="resume",
 )
 async def get_inference():

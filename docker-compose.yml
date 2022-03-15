@@ -14,13 +14,13 @@ services:
       # so should you get more than 10 workers, db will complain.
       # https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/1
       - MAX_WORKERS=5
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
+      - DB_USER=${DB_USERNAME?Variable not set}
+      - DB_PASSWORD=${DB_PASSWORD?Variable not set}
       - DB_HOST=db
       - DB_PORT=5432
       - DB_NAME=postgres
       # - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
+      # - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
     labels:
       # Enable Traefik for this specific "backend" service
       # needed because of the `--providers.docker.exposedbydefault=false` command in the
@@ -77,8 +77,8 @@ services:
     networks:
       - db-network
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=${DB_USERNAME?Variable not set}
+      - POSTGRES_PASSWORD=${DB_PASSWORD?Variable not set}
       - POSTGRES_DB=postgres
 
   db-monitoring:
@@ -91,8 +91,8 @@ services:
     depends_on:
       - db
     environment:
-      - PGADMIN_DEFAULT_EMAIL=klimczak.mathieu@pm.me
-      - PGADMIN_DEFAULT_PASSWORD=test
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL?Variable not set}
+      - PGADMIN_DEFAULT_PASSWORD=${HASHED_PGADMIN_DEFAULT_EMAIL?Variable not set}
       - PGADMIN_LISTEN_PORT=5050
     labels:
       - traefik.enable=true

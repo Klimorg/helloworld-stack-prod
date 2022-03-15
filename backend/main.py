@@ -2,7 +2,6 @@ from app.db import Healthcheck, database, init_models
 from app.routes import inferences
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
-from loguru import logger
 
 app = FastAPI(
     title="Mathieu's Stack",
@@ -20,21 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.state.database = database
-
-# @app.on_event("startup")
-# async def startup():
-#     if not database.is_connected:
-#         await database.connect()
-#     logger.info("Connection to database enabled.")
-#     # create a dummy entry
-#     await Healthcheck.objects.get_or_create(status="ok")
-
-
-# @app.on_event("shutdown")
-# async def shutdown():
-#     if database.is_connected:
-#         await database.disconnect()
-#     logger.info("Connection to database disabled.")
 
 
 @app.on_event("startup")
