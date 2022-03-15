@@ -2,3 +2,5 @@ fastapi==0.75.0
 ormar==0.10.25
 asyncpg==0.25.0
 psycopg2-binary==2.9.3
+sqlmodel==0.0.6
+loguru==0.6.0

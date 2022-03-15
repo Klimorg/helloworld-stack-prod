@@ -1,7 +1,7 @@
 services:
 
   traefik:
-    # Use the latest v2.6.x Traefik image available, check https://hub.docker.com/_/traefik?tab=tags
+    # Use the latest v2.x.x Traefik image available, check https://hub.docker.com/_/traefik?tab=tags
     image: traefik:v2.6.1
     ports:
       # Listen on port 80, default port for HTTP, necessary to rediect to HTTPS
@@ -37,7 +37,7 @@ services:
       # above on HTTPS
       - traefik.http.routers.traefik-dashboard-http.middlewares=https-redirect
       # admin-auth middleware with HTTP basic auth
-      # Using the env varaibles USERNAME and HASHED_PASSWORD
+      # Using the env varaables USERNAME and HASHED_PASSWORD
       - traefik.http.middlewares.admin-auth.basicauth.users=${USERNAME?Variable not set}:${HASHED_PASSWORD?Variable not set}
       # Enable HTTP Basic auth, using the middleware created above
       - traefik.http.routers.traefik-dashboard-https.middlewares=admin-auth

@@ -1,10 +1,9 @@
 services:
 
-  backend:
+  backend-dev:
     build:
       context: .
       dockerfile: Dockerfile
-    restart: always
     container_name: fastapi
     environment:
       # gunicorn will try to set as many workers as possible but
@@ -33,13 +32,13 @@ services:
       # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
       # in the docker-compose.traefik.yml file
       - traefik.http.routers.app-http.entrypoints=http
-      - traefik.http.routers.app-http.rule=Host(`fastapi.mathieuklimczak.com`)
+      - traefik.http.routers.app-http.rule=Host(`dev.fastapi.mathieuklimczak.com`)
       # Use the Traefik-public network (declared below)
       - traefik.docker.network=traefik-public
       # HTTPS
       # Make Traefik use this domain in HTTPS
       - traefik.http.routers.app-https.entrypoints=https
-      - traefik.http.routers.app-https.rule=Host(`fastapi.mathieuklimczak.com`)
+      - traefik.http.routers.app-https.rule=Host(`dev.fastapi.mathieuklimczak.com`)
       - traefik.http.routers.app-https.tls=true
       # Use the "le" (Let's Encrypt) resolver
       # Corresponds to the `--certificatesresolvers.le.*` commands in the
@@ -56,11 +55,11 @@ services:
       # Use the public network created to be shared between Traefik and
       # any other service that needs to be publicly available with https
       - traefik-public
-      - db-network
+      - db-network-dev
     depends_on:
-      - db
+      - db-dev
 
-  db:
+  db-dev:
     image: postgres:14.2-bullseye
     container_name: postgre
     restart: always
@@ -69,21 +68,20 @@ services:
     expose:
       - 5432
     networks:
-      - db-network
+      - db-network-dev
     environment:
       - POSTGRES_USER=${DB_USERNAME?Variable not set}
       - POSTGRES_PASSWORD=${DB_PASSWORD?Variable not set}
       - POSTGRES_DB=postgres
 
-  db-monitoring:
+  db-monitoring-dev:
     image: dpage/pgadmin4:6.6
     container_name: pgadmin
-    restart: always
     networks:
       - traefik-public
-      - db-network
+      - db-network-dev
     depends_on:
-      - db
+      - db-dev
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL?Variable not set}
       - PGADMIN_DEFAULT_PASSWORD=${HASHED_PGADMIN_DEFAULT_EMAIL?Variable not set}
@@ -98,13 +96,13 @@ services:
       # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
       # in the docker-compose.traefik.yml file
       - traefik.http.routers.pgadmin-http.entrypoints=http
-      - traefik.http.routers.pgadmin-http.rule=Host(`pgadmin.mathieuklimczak.com`)
+      - traefik.http.routers.pgadmin-http.rule=Host(`dev.pgadmin.mathieuklimczak.com`)
       # Use the Traefik-public network (declared below)
       - traefik.docker.network=traefik-public
       # HTTPS
       # Make Traefik use this domain in HTTPS
       - traefik.http.routers.pgadmin-https.entrypoints=https
-      - traefik.http.routers.pgadmin-https.rule=Host(`pgadmin.mathieuklimczak.com`)
+      - traefik.http.routers.pgadmin-https.rule=Host(`dev.pgadmin.mathieuklimczak.com`)
       - traefik.http.routers.pgadmin-https.tls=true
       # Use the "le" (Let's Encrypt) resolver
       # Corresponds to the `--certificatesresolvers.le.*` commands in the
@@ -118,10 +116,9 @@ services:
       # above on HTTPS
       - traefik.http.routers.pgadmin-http.middlewares=https-redirect
 
-  uptime-kuma:
+  uptime-kuma-dev:
     image: louislam/uptime-kuma
     container_name: uptime_kuma
-    restart: always
     labels:
       - traefik.enable=true
       - traefik.http.services.kuma.loadBalancer.server.port=3001
@@ -132,13 +129,13 @@ services:
       # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
       # in the docker-compose.traefik.yml file
       - traefik.http.routers.kuma-http.entrypoints=http
-      - traefik.http.routers.kuma-http.rule=Host(`kuma.mathieuklimczak.com`)
+      - traefik.http.routers.kuma-http.rule=Host(`dev.kuma.mathieuklimczak.com`)
       # Use the Traefik-public network (declared below)
       - traefik.docker.network=traefik-public
       # HTTPS
       # Make Traefik use this domain in HTTPS
       - traefik.http.routers.kuma-https.entrypoints=https
-      - traefik.http.routers.kuma-https.rule=Host(`kuma.mathieuklimczak.com`)
+      - traefik.http.routers.kuma-https.rule=Host(`dev.kuma.mathieuklimczak.com`)
       - traefik.http.routers.kuma-https.tls=true
       # Use the "le" (Let's Encrypt) resolver
       # Corresponds to the `--certificatesresolvers.le.*` commands in the

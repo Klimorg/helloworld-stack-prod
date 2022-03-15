@@ -19,13 +19,13 @@
   "python.languageServer": "Pylance",
   "python.analysis.typeCheckingMode": "basic",
   "python.analysis.extraPaths": ["./src", "./model"],
-  "python.sortImports.path": "isort",
-  "python.sortImports.args": ["-sp setup.cfg"],
-  "[python]": {
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": true
-    }
-  },
+  // "python.sortImports.path": "isort",
+  // "python.sortImports.args": ["-sp setup.cfg"],
+  // "[python]": {
+  //   "editor.codeActionsOnSave": {
+  //     "source.organizeImports": true
+  //   }
+  // },
   "python.linting.flake8Enabled": true,
   "python.linting.pylintEnabled": false,
   "python.linting.flake8Path": "flake8",
