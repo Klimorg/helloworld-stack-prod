@@ -63,3 +63,17 @@ root@ubuntu-s-1vcpu-2gb-ams3-01:~/code/tuto_traefik#
 ## Monitoring Backend with Uptime-Kuma
 
 * [Uptime-Kuma Traefik configuration](https://github.com/louislam/uptime-kuma/wiki/Reverse-Proxy#Traefik)
+
+## Environement variables needed to be set
+
+* Traefik Dashboard :
+  * USERNAME
+  * HASHED_PASSWORD
+
+* PostgreSQl + FastaPI connection to DB :
+  * DB_USERNAME
+  * DB_PASSWORD
+
+* PgAdmin db monitoring :
+  * PGADMIN_DEFAULT_EMAIL
+  * HASHED_PGADMIN_DEFAULT_EMAIL
