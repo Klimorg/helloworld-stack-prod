@@ -16,5 +16,5 @@ jobs:
      
           script: |
             cd test
-            git clone git@github.com:Klimorg/stack_prod.git
+            # git clone git@github.com:Klimorg/stack_prod.git
             echo 'Deployment successful to digital ocean' >> test_deploy.txt 
