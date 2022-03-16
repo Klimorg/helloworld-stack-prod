@@ -7,7 +7,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/black
+      - uses: actions/checkout@v2
+      - uses: psf/black@stable
 
   deploy:
     runs-on: ubuntu-latest
