@@ -84,7 +84,7 @@ services:
       - db-dev
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL?Variable not set}
-      - PGADMIN_DEFAULT_PASSWORD=${HASHED_PGADMIN_DEFAULT_EMAIL?Variable not set}
+      - PGADMIN_DEFAULT_PASSWORD=${HASHED_PGADMIN_DEFAULT_PASSWORD?Variable not set}
       - PGADMIN_LISTEN_PORT=5050
     labels:
       - traefik.enable=true
