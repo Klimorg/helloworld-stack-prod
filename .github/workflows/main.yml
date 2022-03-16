@@ -7,11 +7,11 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: psf/black@stable
+      - uses: ./.github/workflows/black
 
   deploy:
     runs-on: ubuntu-latest
+    needs: [lint]
     steps:
       - name: Configure SSH
         run: |
