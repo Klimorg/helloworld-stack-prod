@@ -25,11 +25,8 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           
       - name: Add deploy key to ssh-agent 
-        run: ssh staging 'eval "$(ssh-agent -s)" && ssh-add ~/.ssh/deploy && ssh-add -l -E md5'
+        run: ssh staging 'eval "$(ssh-agent -s)" && ssh-add ~/.ssh/deploy && ssh-add -l -E md5 && cd test/stack_prod && git fetch && git pull'
           
-      - name: Check out the source
-        run: ssh staging 'cd test/stack_prod && git fetch && git pull'
-
       #- name: Stop the server
       #  run: ssh staging 'sudo systemctl stop my-application'
       #- name: Deploy test
