@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Linting using black
-        uses: black.yaml
+        uses: ./black.yaml
 
   deploy:
     runs-on: ubuntu-latest
