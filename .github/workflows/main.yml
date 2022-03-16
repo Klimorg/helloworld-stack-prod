@@ -4,6 +4,12 @@ on:
     branches: [main]
 
 jobs:
+  black:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Linting using black
+        uses: black.yaml
+
   deploy:
     runs-on: ubuntu-latest
     steps:

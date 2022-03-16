@@ -3,6 +3,7 @@ services:
   traefik:
     # Use the latest v2.x.x Traefik image available, check https://hub.docker.com/_/traefik?tab=tags
     image: traefik:v2.6.1
+    container_name: traefik_reverse_proxy
     ports:
       # Listen on port 80, default port for HTTP, necessary to rediect to HTTPS
       - 80:80 #port_outside_container:port_inside_container
