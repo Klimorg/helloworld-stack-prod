@@ -8,10 +8,3 @@ COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
 
 COPY ./backend /app/
-
-# # add entrypoint.sh
-# COPY ./prestart.sh .
-# RUN chmod +x /app/prestart.sh
-
-# # run entrypoint.sh
-# ENTRYPOINT ["/app/prestart.sh"]
