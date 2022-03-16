@@ -4,11 +4,11 @@ on:
     branches: [main]
 
 jobs:
-  black:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Linting using black
-        uses: ./black.yaml
+      - uses: actions/checkout@v2
+      - uses: psf/black@stable
 
   deploy:
     runs-on: ubuntu-latest
