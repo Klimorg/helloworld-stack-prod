@@ -24,6 +24,9 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           
+      - name: Add deploy key to ssh-agent 
+        run: ssh staging 'eval "$(ssh-agent -s)" && ssh-add ~/.ssh/deploy && ssh-add -l -E md5'
+          
       - name: Check out the source
         run: ssh staging 'cd test/stack_prod && git fetch && git pull'
 
