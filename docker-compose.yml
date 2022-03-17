@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    restart: unless-stopped
+    restart: always
     container_name: fastapi
     environment:
       # gunicorn will try to set as many workers as possible but
