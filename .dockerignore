@@ -6,3 +6,13 @@ setup.*
 *.md
 Dockerfile
 .devcontainer
+.github*
+.pytest_cache*
+.stack_prod*
+.pre-commit.*
+.docker-compose-*
+.docker-compose.*
+LICENSE
+makefile
+requirements-*
+setup.*
