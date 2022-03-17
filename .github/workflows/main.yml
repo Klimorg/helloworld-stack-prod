@@ -4,15 +4,25 @@ on:
     branches: [main]
 
 jobs:
-  lint:
+  precommit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: psf/black@stable
+      - name: set PY
+        run: echo "PY=$(python -VV | sha256sum | cut -d' ' -f1)" >> $GITHUB_ENV
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
+
+  # lint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: psf/black@stable
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [lint]
+    needs: [precommit]
     steps:
       - name: Configure SSH
         run: |
