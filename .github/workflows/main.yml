@@ -50,7 +50,7 @@ jobs:
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           PGADMIN_DEFAULT_EMAIL: ${{ secrets.PGADMIN_DEFAULT_EMAIL }}
-          PGADMIN_DEFAULT_PASSWORD: ${{ secrets.PGADMIN_DEFAULT_PASSWORD }}
+          PGADMIN_DEFAULT_PASSWORD: ${{ secrets.HASHED_PGADMIN_DEFAULT_PASSWORD }}
 
       #- name: Stop the server
       #  run: ssh staging 'sudo systemctl stop my-application'
