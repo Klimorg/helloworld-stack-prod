@@ -46,7 +46,7 @@ jobs:
 
       - name: Update stack
         run:
-          ssh staging 'export DB_USERNAME=$DB_USERNAME && export DB_PASSWORD=$DB_PASSWORD && export PGADMIN_DEFAULT_EMAIL=$PGADMIN_DEFAULT_EMAIL && export HASHED_PGADMIN_DEFAULT_PASSWORD=$HASHED_PGADMIN_DEFAULT_PASSWORD && echo $DB_USERNAME && echo $DB_PASSWORD && echo $PGADMIN_DEFAULT_EMAIL && echo $HASHED_PGADMIN_DEFAULT_PASSWORD && cd code/stack_prod && docker-compose -f docker-compose.yml up --build -d && exit'
+          ssh staging 'export DB_USERNAME=$DB_USERNAME && export DB_PASSWORD=$DB_PASSWORD && export PGADMIN_DEFAULT_EMAIL=$PGADMIN_DEFAULT_EMAIL && export HASHED_PGADMIN_DEFAULT_PASSWORD=$HASHED_PGADMIN_DEFAULT_PASSWORD && echo $DB_USERNAME >> test.txt && echo $DB_PASSWORD >> test.txt && echo $PGADMIN_DEFAULT_EMAIL >> test.txt && echo $HASHED_PGADMIN_DEFAULT_PASSWORD >> test.txt && cd code/stack_prod && docker-compose -f docker-compose.yml up --build -d && exit'
         env:
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
