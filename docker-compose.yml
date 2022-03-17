@@ -12,7 +12,7 @@ services:
       # so should you get more than 10 workers, db will complain.
       # https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/1
       - MAX_WORKERS=5
-      - DB_USER=${DB_USERNAME?Variable not set}
+      - DB_USERNAME=${DB_USERNAME?Variable not set}
       - DB_PASSWORD=${DB_PASSWORD?Variable not set}
       - DB_HOST=db
       - DB_PORT=5432
