@@ -2,6 +2,7 @@ from app.db import Healthcheck, database, init_models
 from app.routes import inferences
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import RedirectResponse
 
 app = FastAPI(
     title="Mathieu's Stack",
@@ -35,6 +36,15 @@ async def shutdown() -> None:
     database_ = app.state.database
     if database_.is_connected:
         await database_.disconnect()
+
+
+@app.get(
+    "/",
+    tags=["Démarrage"],
+    description="démarrage de l'API sur la page de documentation.",
+)
+def main():
+    return RedirectResponse(url="/docs/")
 
 
 @app.get(
