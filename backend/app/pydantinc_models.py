@@ -1,11 +1,12 @@
 from datetime import date, time
 
+import arrow
 from pydantic import BaseModel, Field
 
 
 class InferenceBase(BaseModel):
-    inference_date: date
-    inference_time: time
+    inference_date: date = Field(default=arrow.now().format("YYYY-MM-DD"))
+    inference_time: time = Field(default=arrow.now().format("HH:mm:ss"))
     num_detections: int = Field(nullable=True)
     confidence: float = Field(ge=0.0, le=1.0)
 
