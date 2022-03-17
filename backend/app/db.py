@@ -1,8 +1,8 @@
-from datetime import date
+from datetime import date, time
 
 import databases
 import sqlalchemy
-from ormar import Date, Float, Integer, Model, ModelMeta, String
+from ormar import Date, Float, Integer, Model, ModelMeta, String, Time
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from pydantic import PostgresDsn
@@ -36,6 +36,7 @@ class Inferences(Model):
 
     id: int = Integer(primary_key=True)
     inference_date: date = Date()
+    inference_time: time = Time()
     num_detections: int = Integer(minimum=0)
     confidence: float = Float(minimum=0, maximum=1)
 

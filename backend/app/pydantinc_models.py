@@ -1,10 +1,11 @@
-from datetime import date
+from datetime import date, time
 
 from pydantic import BaseModel, Field
 
 
 class InferenceBase(BaseModel):
     inference_date: date
+    inference_time: time
     num_detections: int = Field(nullable=True)
     confidence: float = Field(ge=0.0, le=1.0)
 
