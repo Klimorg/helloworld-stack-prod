@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    restart: always
+    restart: unless-stopped
     container_name: fastapi
     environment:
       # gunicorn will try to set as many workers as possible but
@@ -86,7 +86,7 @@ services:
       - db
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL?Variable not set}
-      - PGADMIN_DEFAULT_PASSWORD=${HASHED_PGADMIN_DEFAULT_EMAIL?Variable not set}
+      - PGADMIN_DEFAULT_PASSWORD=${HASHED_PGADMIN_DEFAULT_PASSWORD?Variable not set}
       - PGADMIN_LISTEN_PORT=5050
     labels:
       - traefik.enable=true
