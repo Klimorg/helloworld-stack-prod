@@ -4,15 +4,15 @@ on:
     branches: [main]
 
 jobs:
-  precommit:
-    runs-on: ubuntu-latest
-    steps:
-      - name: set PY
-        run: echo "PY=$(python -VV | sha256sum | cut -d' ' -f1)" >> $GITHUB_ENV
-      - uses: actions/cache@v1
-        with:
-          path: ~/.cache/pre-commit
-          key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
+  # precommit:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: set PY
+  #       run: echo "PY=$(python -VV | sha256sum | cut -d' ' -f1)" >> $GITHUB_ENV
+  #     - uses: actions/cache@v1
+  #       with:
+  #         path: ~/.cache/pre-commit
+  #         key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
 
   # lint:
   #   runs-on: ubuntu-latest
@@ -46,23 +46,9 @@ jobs:
 
       - name: Update stack
         run:
-          ssh staging 'export DB_USERNAME=$DB_USERNAME && export DB_PASSWORD=$DB_PASSWORD && export PGADMIN_DEFAULT_EMAIL=$PGADMIN_DEFAULT_EMAIL && export HASHED_PGADMIN_DEFAULT_PASSWORD=$HASHED_PGADMIN_DEFAULT_PASSWORD && cd code/stack_prod && docker-compose -f docker-compose.yml up --build -d && exit'
+          ssh staging 'export DB_USERNAME=$DB_USERNAME && export DB_PASSWORD=$DB_PASSWORD && export PGADMIN_DEFAULT_EMAIL=$PGADMIN_DEFAULT_EMAIL && export HASHED_PGADMIN_DEFAULT_PASSWORD=$HASHED_PGADMIN_DEFAULT_PASSWORD && echo $DB_USERNAME && echo $DB_PASSWORD && echo $PGADMIN_DEFAULT_EMAIL && echo $HASHED_PGADMIN_DEFAULT_PASSWORD && cd code/stack_prod && docker-compose -f docker-compose.yml up --build -d && exit'
         env:
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           PGADMIN_DEFAULT_EMAIL: ${{ secrets.PGADMIN_DEFAULT_EMAIL }}
           PGADMIN_DEFAULT_PASSWORD: ${{ secrets.HASHED_PGADMIN_DEFAULT_PASSWORD }}
-
-      #- name: Stop the server
-      #  run: ssh staging 'sudo systemctl stop my-application'
-      #- name: Deploy test
-      #  uses: appleboy/ssh-action@v0.1.2
-      #  with:
-      #    host: ${{secrets.SSH_HOST}} # IP address of the server you wish to ssh into
-      #    key: ${{secrets.SSH_KEY}} # Private or public key of the server
-      #    username: ${{ secrets.SSH_USERNAME }} # User of the server you want to ssh into
-
-      #    script: |
-      #      cd test
-      #      git clone git@github.com:Klimorg/stack_prod.git
-      #      echo 'Deployment successful to digital ocean' >> test_deploy.txt
