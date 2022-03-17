@@ -17,6 +17,19 @@ To do https with Traefik, you'll need :
 * and a VPS, you can but one for example on [DigitalOcean](https://cloud.digitalocean.com), for around 5 euros/month.
 
 ### Connect your domain name to your VPS
+
+Now that you have a Domain Name, you have to connect it to your VPS. So first you'lle have to record your Domain Name to your VPS, in my case this is explained [here](https://docs.digitalocean.com/products/networking/dns/how-to/add-domains/), you'll need to add this domain to your project and create a [DNS record](https://docs.digitalocean.com/products/networking/dns/how-to/manage-records/). Setting The apex domain (@), and a wildcard (*) to get subdomains will be enough.
+
+Now you have done that you need to change the Name Servers on your Domain Name provider side
+
+
+```shell
+whois mathieuklimczak.com
+ping mathieuklimczak.com
+dig @ns1.digitalocean.com mathieuklimczak.com NS
+```
+
+
 ## Steps :
 
 ### Docker
