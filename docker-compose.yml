@@ -164,4 +164,3 @@ networks:
   traefik-public:
     external: true
   db-network:
-

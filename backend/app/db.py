@@ -3,9 +3,9 @@ from datetime import date, time
 import databases
 import sqlalchemy
 from ormar import Date, Float, Integer, Model, ModelMeta, String, Time
+from pydantic import PostgresDsn
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
-from pydantic import PostgresDsn
 
 from .config import settings
 
