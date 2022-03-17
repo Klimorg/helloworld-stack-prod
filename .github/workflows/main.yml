@@ -22,7 +22,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [precommit]
+    # needs: [precommit]
     steps:
       - name: Configure SSH
         run: |
