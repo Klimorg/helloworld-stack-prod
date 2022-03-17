@@ -42,7 +42,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
 
       - name: Add deploy key to ssh-agent
-        run: ssh staging 'eval "$(ssh-agent -s)" && ssh-add ~/.ssh/deploy && ssh-add -l -E md5 && cd code/stack_prod && && git checkout main && git pull origin main && exit'
+        run: ssh staging 'eval "$(ssh-agent -s)" && ssh-add ~/.ssh/deploy && ssh-add -l -E md5 && cd code/stack_prod && git checkout main && git pull origin main && exit'
 
       - name: Update stack
         run: ssh staging 'cd code/stack_prod && docker-compose -f docker-compose.yml up --build -d && exit'
