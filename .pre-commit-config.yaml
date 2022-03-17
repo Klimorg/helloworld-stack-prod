@@ -1,0 +1,83 @@
+ci:
+    autofix_commit_msg: |
+        [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+        for more information, see https://pre-commit.ci
+    autofix_prs: true
+    autoupdate_branch: ''
+    autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+    autoupdate_schedule: weekly
+    skip: []
+    submodules: false
+
+repos:
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.1.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        exclude: "mkdocs.yml"
+      #- id: check-added-large-files
+      - id: requirements-txt-fixer
+
+  - repo: https://github.com/asottile/add-trailing-comma
+    rev: v2.2.1
+    hooks:
+      - id: add-trailing-comma
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+        name: isort (python)
+
+  - repo: https://github.com/ambv/black
+    rev: 22.1.0
+    hooks:
+      - id: black
+        language_version: python3.8
+
+  # - repo: local
+  #   hooks:
+  #     - id: isort
+  #       name: isort
+  #       stages: [commit]
+  #       language: system
+  #       entry: isort
+  #       types: [python]
+
+      # - id: flake8
+      #   name: flake8
+      #   stages: [commit]
+      #   language: system
+      #   entry: flake8
+      #   types: [python]
+      #   exclude: setup.py
+
+      # - id: mypy
+      #   name: mypy
+      #   stages: [commit]
+      #   language: system
+      #   entry: mypy
+      #   types: [python]
+      #   pass_filenames: false
+
+      # - id: pytest
+      #   name: pytest
+      #   stages: [commit]
+      #   language: system
+      #   entry: python -m pytest -v --cov
+      #   types: [python]
+      #   always_run: true
+      #   pass_filenames: false
+
+      # - id: pytest-cov
+      #   name: pytest
+      #   stages: [push]
+      #   language: system
+      #   entry: python -m pytest -v --cov
+      #   types: [python]
+      #   pass_filenames: false
+
