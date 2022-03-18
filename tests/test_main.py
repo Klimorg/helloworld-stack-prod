@@ -9,8 +9,3 @@ client = TestClient(app)
 def test_read_main():
     response = client.get("/healthcheck/")
     assert response.status_code == 200
-
-
-def test_read_main2():
-    response = client.get("/healthcheck/")
-    assert response.status_code == 201
