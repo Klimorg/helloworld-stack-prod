@@ -1,0 +1,10 @@
+name: Safety check
+description: test
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run Safety check
+      run: |
+        python -m safety check
+      shell: bash
