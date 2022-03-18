@@ -1,4 +1,3 @@
-bandit==1.7.4
 # linting, formating, typing
 black==22.1.0
 # black formatting for jupyter notebooks
