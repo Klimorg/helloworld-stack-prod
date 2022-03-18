@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, status
 
 from ..db import Inferences
-from ..pydantinc_models import InferenceCreate, InferenceRead
+from ..pydantic_models import InferenceCreate, InferenceRead
 
 router = APIRouter()
 

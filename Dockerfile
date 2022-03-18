@@ -7,4 +7,4 @@ RUN apt-get update && apt-get install --no-install-recommends -y netcat && rm -r
 COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
 
-COPY ./backend /app/
+COPY ./app ./app

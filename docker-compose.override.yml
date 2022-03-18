@@ -3,13 +3,14 @@ services:
   backend:
     ports:
       - 80:80
+    # command: uvicorn app.main:app --reload
     environment:
       # gunicorn will try to set as many workers as possible but
       # the default max_size of workers for async postgres is 10
       # so should you get more than 10 workers, db will complain.
       # https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/1
       - MAX_WORKERS=5
-      - DB_USER=postgres
+      - DB_USERNAME=postgres
       - DB_PASSWORD=postgres
       - DB_HOST=db
       - DB_PORT=5432

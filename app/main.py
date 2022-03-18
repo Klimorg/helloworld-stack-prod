@@ -1,8 +1,9 @@
-from app.db import Healthcheck, database, init_models
-from app.routes import inferences
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
+
+from .db import Healthcheck, database, init_models
+from .routes import inferences
 
 app = FastAPI(
     title="Mathieu's Stack",
