@@ -37,7 +37,7 @@ class Inferences(Model):
     id: int = Integer(primary_key=True)
     inference_date: date = Date()
     inference_time: time = Time()
-    num_detections: int = Integer(minimum=0)
+    num_detections: int = Integer(minimum=0)  # type: ignore
     confidence: float = Float(minimum=0, maximum=1)
 
 
