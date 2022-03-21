@@ -11,12 +11,12 @@ services:
       # the default max_size of workers for async postgres is 10
       # so should you get more than 10 workers, db will complain.
       # https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/1
-      - MAX_WORKERS:"5"
-      - DB_USERNAME:"${DB_USERNAME}"
-      - DB_PASSWORD:"${DB_PASSWORD}"
-      - DB_HOST:"db"
-      - DB_PORT:"5432"
-      - DB_NAME:"postgres"
+      MAX_WORKERS: 5
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: postgres
     labels:
       # Enable Traefik for this specific "backend" service
       # needed because of the `--providers.docker.exposedbydefault=false` command in the
@@ -68,12 +68,12 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     expose:
       - 5432
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: postgres
     networks:
       - db-network
-    environment:
-      - POSTGRES_USER=${DB_USERNAME}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=postgres
 
   db-monitoring:
     image: dpage/pgadmin4:6.6
@@ -85,9 +85,9 @@ services:
     depends_on:
       - db
     environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${HASHED_PGADMIN_DEFAULT_PASSWORD}
-      - PGADMIN_LISTEN_PORT=5050
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${HASHED_PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_LISTEN_PORT: 5050
     labels:
       - traefik.enable=true
       - traefik.http.services.pgadmin.loadBalancer.server.port=5050
