@@ -1,6 +1,6 @@
 arrow==1.2.2
 asyncpg==0.25.0
-fastapi==0.75.0
+fastapi==0.75.1
 loguru==0.6.0
 ormar==0.10.25
 psycopg2-binary==2.9.3
