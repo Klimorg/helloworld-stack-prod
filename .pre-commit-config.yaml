@@ -54,6 +54,10 @@ repos:
       - id: check-github-actions
       - id: check-github-workflows
 
+  - repo: https://github.com/hadolint/hadolint
+    rev: master
+    hooks:
+      - id: hadolint-docker
 
 
   # - repo: local

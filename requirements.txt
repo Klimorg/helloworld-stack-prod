@@ -1,5 +1,6 @@
 arrow==1.2.2
 asyncpg==0.25.0
+elastic-apm==6.8.1
 fastapi==0.75.0
 loguru==0.6.0
 ormar==0.10.25
