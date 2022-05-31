@@ -64,7 +64,7 @@ jobs:
         with:
           file: Dockerfile
           push: true
-          tags: vorphus/api-prod:latest,vorphus/api-prod:$DEPLOYMENT_COMMIT
+          tags: vorphus/api-prod:latest,vorphus/api-prod:${{ github.sha }}
         env:
           DEPLOYMENT_COMMIT: ${{ github.sha }}
           DEPLOYMENT_DATE: ${{ steps.date.outputs.date }}
