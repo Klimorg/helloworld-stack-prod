@@ -12,7 +12,7 @@ pipreqs==0.4.11
 # precommit action
 pre-commit==2.19.0
 # unit tests
-pytest==7.1.1
+pytest==7.1.2
 pytest-cov==3.0.0
 pytest-xdist==2.5.0
 # code quality infos
