@@ -67,8 +67,9 @@ jobs:
           tags: vorphus/api-prod:latest,vorphus/api-prod:${{ github.sha }}
 
   deploy-stack:
-    needs: docker
+    needs: build-image
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
     steps:
       - name: Configure SSH
         run: |
