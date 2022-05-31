@@ -17,3 +17,9 @@ network:
 .PHONY: stack_up
 stack_up:
 	docker-compose -f docker-compose.yml up -d
+
+.PHONY: install-dev
+install-dev:
+	python -m pip install -e ".[dev]" --no-cache-dir
+	pre-commit install
+	pre-commit autoupdate

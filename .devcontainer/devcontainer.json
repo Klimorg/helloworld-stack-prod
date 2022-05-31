@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.158.0/containers/docker-existing-dockerfile
 {
-  "name": "AI_segmentation_project",
+  "name": "AI-stack-prod",
   // Sets the run context to one level up instead of the .devcontainer folder.
   "context": "..",
   // Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
@@ -46,14 +46,14 @@
   //Use 'forwardPorts' to make a list of ports inside the container available locally.
   "forwardPorts": [5000, 8001, 6006],
   //The path of the workspace folder inside the container.
-  "workspaceFolder": "${localEnv:HOME}${localEnv:USERPROFILE}/template_segmentation",
+  "workspaceFolder": "${localEnv:HOME}${localEnv:USERPROFILE}/stack-prod",
   // Uncomment the next line to run commands after the container is created - for example installing curl.
   "postCreateCommand": "make install-dev",
   // Uncomment when using a ptrace-based debugger like C++, Go, and Rust
-  "runArgs": ["-it", "--rm", "-P", "--runtime=nvidia"],
+  "runArgs": ["-it", "--rm", "-P"],
   // Uncomment to use the Docker CLI from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
   "mounts": [
-    "type=bind,source=${localWorkspaceFolder},target=${localEnv:HOME}${localEnv:USERPROFILE}/template_segmentation"
+    "type=bind,source=${localWorkspaceFolder},target=${localEnv:HOME}${localEnv:USERPROFILE}/stack-prod"
   ]
   // Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
   //"remoteUser": "vorph"

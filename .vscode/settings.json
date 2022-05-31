@@ -18,7 +18,7 @@
   // config python
   "python.languageServer": "Pylance",
   "python.analysis.typeCheckingMode": "basic",
-  "python.analysis.extraPaths": ["./src", "./model"],
+  "python.analysis.extraPaths": ["./app"],
   // "python.sortImports.path": "isort",
   // "python.sortImports.args": ["-sp setup.cfg"],
   // "[python]": {

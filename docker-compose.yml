@@ -1,9 +1,10 @@
 services:
 
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: vorphus/api-prod:latest
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     container_name: fastapi
     depends_on:
       - apm-server
