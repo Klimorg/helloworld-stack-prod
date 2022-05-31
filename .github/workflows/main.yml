@@ -46,10 +46,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
     steps:
-      # - name: Get current date
-      # # https://stackoverflow.com/questions/60942067/get-current-date-and-time-in-github-workflows
-      #   id: date
-      #   run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H:%M:%S')"
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -93,7 +89,7 @@ jobs:
 
       - name: Update stack
         run:
-          ssh staging 'export DEPLOYMENT_COMMIT=${{ github.sha }} && export DEPLOYMENT_DATE=${{ github.event.repository.updated_at}} && export DB_USERNAME=${{ secrets.DB_USERNAME }} && export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && export PGADMIN_DEFAULT_EMAIL=${{ secrets.PGADMIN_DEFAULT_EMAIL }} && export HASHED_PGADMIN_DEFAULT_PASSWORD=${{ secrets.HASHED_PGADMIN_DEFAULT_PASSWORD }} && cd code/stack_prod && docker-compose pull && docker-compose -f docker-compose.yml up --build -d && exit'
+          ssh staging 'export DEPLOYMENT_COMMIT=${{ github.sha }} && export DEPLOYMENT_DATE=${{ github.event.repository.pushed_at }} && export DB_USERNAME=${{ secrets.DB_USERNAME }} && export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && export PGADMIN_DEFAULT_EMAIL=${{ secrets.PGADMIN_DEFAULT_EMAIL }} && export HASHED_PGADMIN_DEFAULT_PASSWORD=${{ secrets.HASHED_PGADMIN_DEFAULT_PASSWORD }} && cd code/stack_prod && docker-compose pull && docker-compose -f docker-compose.yml up --build -d && exit'
         # env:
         #   DEPLOYMENT_COMMIT: ${{ github.sha }}
         #   DEPLOYMENT_DATE: ${{ github.event.repository.updated_at}}
