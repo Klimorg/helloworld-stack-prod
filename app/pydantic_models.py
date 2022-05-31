@@ -1,7 +1,7 @@
-from datetime import date, time
+from datetime import date, time, datetime
 
 import arrow
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, BaseSettings
 
 
 class InferenceBase(BaseModel):
@@ -22,3 +22,13 @@ class InferenceCreate(InferenceBase):
 
 class InferenceRead(InferenceBase):
     id: int
+
+
+class DeploymentSettings(BaseSettings):
+    deployment_commit: str = Field(env="DEPLOYMENT_COMMIT")
+    deployment_date: datetime = Field(env="DEPLOYMENT_DATE")
+
+
+class DeploymentInfo(BaseModel):
+    deployment_commit: str
+    deployment_date: datetime

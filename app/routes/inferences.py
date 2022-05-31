@@ -2,8 +2,8 @@ from typing import List
 
 from fastapi import APIRouter, status
 
-from ..db import Inferences
-from ..pydantic_models import InferenceCreate, InferenceRead
+from app.db import Inferences
+from app.pydantic_models import InferenceCreate, InferenceRead
 
 router = APIRouter()
 
