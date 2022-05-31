@@ -1,10 +1,10 @@
 # linting, formating, typing
-black==22.1.0
+black==22.3.0
 # black formatting for jupyter notebooks
 darglint==1.8.1
 flake8==4.0.1
 isort==5.10.1
-mypy==0.942
+mypy==0.960
 # requirements writing
 pipreqs==0.4.11
 # precommit action
@@ -12,5 +12,5 @@ pre-commit==2.17.0
 # code quality infos
 radon==5.1.0
 # refactoring
-rope==0.23.0
+rope==1.1.1
 wemake-python-styleguide==0.16.1
