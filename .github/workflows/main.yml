@@ -46,6 +46,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
     steps:
+      - name: Get current date
+      # https://stackoverflow.com/questions/60942067/get-current-date-and-time-in-github-workflows
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H:%M:%S')"
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -60,7 +64,10 @@ jobs:
         with:
           file: Dockerfile
           push: true
-          tags: vorphus/api-prod:latest,vorphus/api-prod:${{ github.sha }}
+          tags: vorphus/api-prod:latest,vorphus/api-prod:$DEPLOYMENT_COMMIT
+        env:
+          DEPLOYMENT_COMMIT: ${{ github.sha }}
+          DEPLOYMENT_DATE: ${{ steps.date.outputs.date }}
 
   deploy:
     needs: docker
