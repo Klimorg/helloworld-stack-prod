@@ -65,9 +65,6 @@ jobs:
           file: Dockerfile
           push: true
           tags: vorphus/api-prod:latest,vorphus/api-prod:${{ github.sha }}
-        env:
-          DEPLOYMENT_COMMIT: ${{ github.sha }}
-          DEPLOYMENT_DATE: ${{ steps.date.outputs.date }}
 
   deploy:
     needs: docker
@@ -96,6 +93,9 @@ jobs:
       - name: Update stack
         run:
           ssh staging 'export DB_USERNAME=${{ secrets.DB_USERNAME }} && export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && export PGADMIN_DEFAULT_EMAIL=${{ secrets.PGADMIN_DEFAULT_EMAIL }} && export HASHED_PGADMIN_DEFAULT_PASSWORD=${{ secrets.HASHED_PGADMIN_DEFAULT_PASSWORD }} && cd code/stack_prod && docker-compose pull && docker-compose -f docker-compose.yml up --build -d && exit'
+        env:
+          DEPLOYMENT_COMMIT: ${{ github.sha }}
+          DEPLOYMENT_DATE: ${{ steps.date.outputs.date }}
 
   build-docs:
     needs: tests
