@@ -63,8 +63,8 @@ jobs:
           tags: vorphus/api-prod:latest,vorphus/api-prod:${{ github.sha }}
 
   deploy:
+    needs: docker
     runs-on: ubuntu-latest
-    needs: tests
     steps:
       - name: Configure SSH
         run: |
