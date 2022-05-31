@@ -7,7 +7,7 @@ from pydantic import PostgresDsn
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from .config import settings
+from app.config import settings
 
 async_db_uri: str = PostgresDsn.build(
     scheme="postgresql+asyncpg",
@@ -37,7 +37,7 @@ class Inferences(Model):
     id: int = Integer(primary_key=True)
     inference_date: date = Date()
     inference_time: time = Time()
-    num_detections: int = Integer(minimum=0)
+    num_detections: int = Integer(minimum=0)  # type: ignore
     confidence: float = Float(minimum=0, maximum=1)
 
 

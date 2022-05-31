@@ -1,12 +1,70 @@
 name: Build & Deploy
-on:
-  push:
-    branches: [main]
+on: [push, workflow_call]
 
 jobs:
+  tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.8", "3.9"]
+        exclude:
+          - os: macos-latest
+            python-version: "3.8"
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Display Python version
+        run: python --version
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install -r requirements-test.txt
+
+      - name: Run Safety check
+        run: |
+          python -m safety check
+
+      - name: Run Bandit
+        run: |
+          python -m bandit -r app/
+
+      - name: Run test suite
+        run: |
+          python -m pytest -v
+
+  docker:
+    needs: tests
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          file: Dockerfile
+          push: true
+          tags: vorphus/api-prod:latest,vorphus/api-prod:${{ github.sha }}
+
   deploy:
     runs-on: ubuntu-latest
-    # needs: [precommit]
+    needs: tests
     steps:
       - name: Configure SSH
         run: |
@@ -30,8 +88,26 @@ jobs:
 
       - name: Update stack
         run:
-          ssh staging 'export DB_USERNAME=${{ secrets.DB_USERNAME }} && \
-                      export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && \
-                      export PGADMIN_DEFAULT_EMAIL=${{ secrets.PGADMIN_DEFAULT_EMAIL }} && \
-                      export HASHED_PGADMIN_DEFAULT_PASSWORD=${{ secrets.HASHED_PGADMIN_DEFAULT_PASSWORD }} && \
-                      cd code/stack_prod && docker-compose -f docker-compose.yml up --build -d && exit'
+          ssh staging 'export DB_USERNAME=${{ secrets.DB_USERNAME }} && export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && export PGADMIN_DEFAULT_EMAIL=${{ secrets.PGADMIN_DEFAULT_EMAIL }} && export HASHED_PGADMIN_DEFAULT_PASSWORD=${{ secrets.HASHED_PGADMIN_DEFAULT_PASSWORD }} && cd code/stack_prod && docker-compose -f docker-compose.yml up --build -d && exit'
+
+  build-docs:
+    needs: tests
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.9"
+      - name: Caching
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.pythonLocation }}
+          key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements.txt') }}
+      - name: Install dependencies
+        run: |
+          python -m pip install -e ".[docs]" --no-cache-dir
+      - name: Deploy documentation
+        run: cd stack_prod && mkdocs gh-deploy --force

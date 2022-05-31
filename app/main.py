@@ -1,8 +1,10 @@
-from app.db import Healthcheck, database, init_models
-from app.routes import inferences
+from elasticapm.contrib.starlette import ElasticAPM, make_apm_client
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
+
+from .db import Healthcheck, database, init_models
+from .routes import inferences
 
 app = FastAPI(
     title="Mathieu's Stack",
@@ -11,6 +13,13 @@ app = FastAPI(
 )
 
 app.include_router(inferences.router, prefix="/inferences")
+
+app.add_middleware(
+    ElasticAPM,
+    client=make_apm_client(
+        {"SERVICE_NAME": "fastapi-app", "SERVER_URL": "http://apm-server:8200"},
+    ),
+)
 
 app.add_middleware(
     CORSMiddleware,
