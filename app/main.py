@@ -1,10 +1,10 @@
-# from elasticapm.contrib.starlette import ElasticAPM, make_apm_client
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 
+from app.config import settings
 from app.db import Healthcheck, database, init_models
-from app.pydantic_models import DeploymentInfo, DeploymentSettings
+from app.pydantic_models import DeploymentInfo
 from app.routes import inferences
 
 app = FastAPI(
@@ -14,13 +14,6 @@ app = FastAPI(
 )
 
 app.include_router(inferences.router, prefix="/inferences")
-
-# app.add_middleware(
-#     ElasticAPM,
-#     client=make_apm_client(
-#         {"SERVICE_NAME": "fastapi-app", "SERVER_URL": "http://apm-server:8200"},
-#     ),
-# )
 
 app.add_middleware(
     CORSMiddleware,
@@ -65,8 +58,11 @@ def main():
     description="Informations concernant le dernier déploiement du conteneur.",
 )
 def get_last_deployment_infos():
-    info = DeploymentSettings()
-    return DeploymentInfo(**info.dict())
+
+    return DeploymentInfo(
+        deployment_commit=settings.DEPLOYMENT_COMMIT,
+        deployment_date=settings.DEPLOYMENT_DATE,
+    )
 
 
 @app.get(

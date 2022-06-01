@@ -11,11 +11,11 @@ from app.config import settings
 
 async_db_uri: str = PostgresDsn.build(
     scheme="postgresql+asyncpg",
-    user=settings.db_user,
-    password=settings.db_pwd,
-    host=settings.db_host,
-    port=settings.db_port,
-    path=f"/{settings.db_name or ''}",
+    user=settings.POSTGRES_USER,
+    password=settings.POSTGRES_PASSWORD,
+    host=settings.POSTGRES_HOST,
+    port=settings.POSTGRES_PORT,
+    path=f"/{settings.POSTGRES_DB or ''}",
 )
 
 

@@ -58,7 +58,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          file: Dockerfile
+          file: Dockerfile.backend
           push: true
           tags: vorphus/api-prod:latest,vorphus/api-prod:${{ github.sha }}
 

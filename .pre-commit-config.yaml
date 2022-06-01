@@ -31,10 +31,10 @@ repos:
       - id: isort
         args: [--profile=black]
 
-  - repo: https://github.com/pryorda/dockerfilelint-precommit-hooks
-    rev: v0.1.0
-    hooks:
-      - id: dockerfilelint
+  # - repo: https://github.com/pryorda/dockerfilelint-precommit-hooks
+  #   rev: v0.1.0
+  #   hooks:
+  #     - id: dockerfilelint
 
   - repo: https://github.com/sirosen/check-jsonschema
     rev: 0.15.1

@@ -1,25 +1,22 @@
+x-db-env: &db-env
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_DB: postgres
+
+x-db-monitoring-env: &db-monitoring-env
+  PGADMIN_DEFAULT_EMAIL: klimczak.mathieu@pm.me
+  PGADMIN_DEFAULT_PASSWORD: 1988
+  PGADMIN_LISTEN_PORT: 5050
+
 services:
 
   backend:
-    image: vorphus/api-prod:latest
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    container_name: fastapi
-    restart: always
-    environment:
-      # gunicorn will try to set as many workers as possible but
-      # the default max_size of workers for async postgres is 10
-      # so should you get more than 10 workers, db will complain.
-      # https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/1
-      MAX_WORKERS: 5
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: postgres
-      DEPLOYMENT_COMMIT: ${DEPLOYMENT_COMMIT}
-      DEPLOYMENT_DATE: ${DEPLOYMENT_DATE}
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0
+    volumes:
+      - ./app:/opt/app
     labels:
       # Enable Traefik for this specific "backend" service
       # needed because of the `--providers.docker.exposedbydefault=false` command in the
@@ -28,7 +25,7 @@ services:
       # Define the port inside of the Docker service to use
       # note thet the name "app" is up to you, the command is `traefik.http.services.{service-name-of-your-choice}.{options-you-want}`
       # see https://doc.traefik.io/traefik/routing/providers/marathon/#services
-      - traefik.http.services.app-dev.loadbalancer.server.port=80
+      - traefik.http.services.app-dev.loadbalancer.server.port=8000
       # HTTP
       # Make Traefik use this domain in HTTP
       # traefik.http.routers.{router-name-of-your-choice}.
@@ -36,33 +33,20 @@ services:
       # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
       # in the docker-compose.traefik.yml file
       - traefik.http.routers.app-dev-http.entrypoints=http
-      - traefik.http.routers.app-dev-http.rule=Host(`fastapi.localhost.com`)
+      - traefik.http.routers.app-dev-http.rule=Host(`api.localhost`)
+      #  && PathPrefix(`/test`)
       # Use the Traefik-public network (declared below)
       - traefik.docker.network=traefik-public
     networks:
       # Use the public network created to be shared between Traefik and
-      # any other service that needs to be publicly available with https
+      # any other service that needs to be publicly available with http or https
       - traefik-public
       - db-network
-      # - elastic
     depends_on:
       - db
-    #   - apm-server
-
   db:
-    image: postgres:14.2-bullseye
-    container_name: postgre
-    restart: always
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    expose:
-      - 5432
     environment:
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: postgres
-    networks:
-      - db-network
+      <<: *db-env
 
   db-monitoring:
     image: dpage/pgadmin4:6.6
@@ -74,9 +58,7 @@ services:
     depends_on:
       - db
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${HASHED_PGADMIN_DEFAULT_PASSWORD}
-      PGADMIN_LISTEN_PORT: 5050
+      <<: *db-monitoring-env
     labels:
       - traefik.enable=true
       - traefik.http.services.pgadmin-dev.loadBalancer.server.port=5050
@@ -87,14 +69,11 @@ services:
       # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
       # in the docker-compose.traefik.yml file
       - traefik.http.routers.pgadmin-dev-http.entrypoints=http
-      - traefik.http.routers.pgadmin-dev-http.rule=Host(`pgadmin.localhost.com`)
+      - traefik.http.routers.pgadmin-dev-http.rule=Host(`pgadmin.localhost`)
       # Use the Traefik-public network (declared below)
       - traefik.docker.network=traefik-public
 
   uptime-kuma:
-    image: louislam/uptime-kuma
-    container_name: uptime_kuma
-    restart: always
     labels:
       - traefik.enable=true
       - traefik.http.services.kuma-dev.loadBalancer.server.port=3001
@@ -105,7 +84,7 @@ services:
       # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
       # in the docker-compose.traefik.yml file
       - traefik.http.routers.kuma-dev-http.entrypoints=http
-      - traefik.http.routers.kuma-dev-http.rule=Host(`kuma.localhost.com`)
+      - traefik.http.routers.kuma-dev-http.rule=Host(`kuma.localhost`)
       # Use the Traefik-public network (declared below)
       - traefik.docker.network=traefik-public
     volumes:
@@ -113,12 +92,12 @@ services:
     networks:
       - traefik-public
 
-volumes:
-  uptime-kuma:
-  postgres_data:
+# volumes:
+#   uptime-kuma:
+#   postgres_data:
 
 
-networks:
-  traefik-public:
-    external: true
-  db-network:
+# networks:
+#   traefik-public:
+#     external: true
+#   db-network:
