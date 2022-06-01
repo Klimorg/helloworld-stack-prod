@@ -6,8 +6,6 @@ services:
     #   context: .
     #   dockerfile: Dockerfile
     container_name: fastapi
-    # depends_on:
-    #   - apm-server
     restart: always
     environment:
       # gunicorn will try to set as many workers as possible but
@@ -65,6 +63,7 @@ services:
       # - elastic
     depends_on:
       - db
+    #   - apm-server
 
   db:
     image: postgres:14.2-bullseye

@@ -1,7 +1,7 @@
-from datetime import date, time, datetime
+from datetime import date, datetime, time
 
 import arrow
-from pydantic import BaseModel, Field, BaseSettings
+from pydantic import BaseModel, BaseSettings, Field
 
 
 class InferenceBase(BaseModel):

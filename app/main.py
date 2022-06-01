@@ -4,8 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 
 from app.db import Healthcheck, database, init_models
+from app.pydantic_models import DeploymentInfo, DeploymentSettings
 from app.routes import inferences
-from app.pydantic_models import DeploymentSettings, DeploymentInfo
 
 app = FastAPI(
     title="Mathieu's Stack",
