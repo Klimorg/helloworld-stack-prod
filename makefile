@@ -6,14 +6,6 @@ docker-run:
 sync:
 	rsync -a ./* root@mathieuklimczak.com:/root/code/tuto_traefik/
 
-.PHONY: traefik-up
-traefik-up:
-	docker compose -f docker-compose.traefik.yml up -d
-
-.PHONY: traefik-down
-traefik-down:
-	docker compose -f docker-compose.traefik.yml -v down
-
 .PHONY: network-up
 network-up:
 	docker network create traefik-public
@@ -22,16 +14,28 @@ network-up:
 network-down:
 	docker network rm traefik-public
 
-.PHONY: stack-up
-stack-up:
-	docker-compose -f docker-compose.yml up -d
+.PHONY: traefik-dev-up
+traefik-dev-up:
+	docker compose -f docker-compose.traefik.yml -f docker-compose.traefik-dev.yml up -d
 
-.PHONY: dev-stack-up
-dev-stack-up:
+.PHONY: traefik-dev-down
+traefik-dev-down:
+	docker compose -f docker-compose.traefik.yml -f docker-compose.traefik-dev.yml -v down
+
+.PHONY: stack-prod-up
+stack-prod-up:
+	docker compose -f docker-compose.yml -f docker-compose-prod.yml up --build
+
+.PHONY: stack-prod-down
+stack-prod-down:
+	docker compose -f docker-compose.yml -f docker-compose-prod.yml -v down
+
+.PHONY: stack-dev-up
+stack-dev-up:
 	docker compose -f docker-compose.yml -f docker-compose-dev.yml up --build
 
-.PHONY: dev-stack-down
-dev-stack-down:
+.PHONY: stack-dev-down
+stack-dev-down:
 	docker compose -f docker-compose.yml -f docker-compose-dev.yml -v down
 
 .PHONY: install-dev

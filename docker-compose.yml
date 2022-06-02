@@ -25,7 +25,7 @@ services:
 
   uptime-kuma:
     image: louislam/uptime-kuma
-    container_name: uptime_kuma
+    container_name: uptime-kuma
     volumes:
       - uptime-kuma:/app/data
     networks:
