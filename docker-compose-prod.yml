@@ -20,14 +20,10 @@ services:
     #   context: .
     #   dockerfile: Dockerfile
     container_name: fastapi
+    command: gunicorn -c app/gunicorn.py -k uvicorn.workers.UvicornWorker app.main:app
     restart: always
     environment:
       <<: *db-env
-      # gunicorn will try to set as many workers as possible but
-      # the default max_size of workers for async postgres is 10
-      # so should you get more than 10 workers, db will complain.
-      # https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/1
-      MAX_WORKERS: 5
       DEPLOYMENT_COMMIT: ${DEPLOYMENT_COMMIT}
       DEPLOYMENT_DATE: ${DEPLOYMENT_DATE}
     labels:
@@ -46,13 +42,13 @@ services:
       # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
       # in the docker-compose.traefik.yml file
       traefik.http.routers.app-http.entrypoints: http
-      traefik.http.routers.app-http.rule: Host(`fastapi.mathieuklimczak.com`)
+      traefik.http.routers.app-http.rule: Host(`fastapiv2.mathieuklimczak.com`)
       # Use the Traefik-public network (declared below)
       traefik.docker.network: traefik-public
       # HTTPS
       # Make Traefik use this domain in HTTPS
       traefik.http.routers.app-https.entrypoints: https
-      traefik.http.routers.app-https.rule: Host(`fastapi.mathieuklimczak.com`)
+      traefik.http.routers.app-https.rule: Host(`fastapiv2.mathieuklimczak.com`)
       traefik.http.routers.app-https.tls: true
       # Use the "le" (Let's Encrypt) resolver
       # Corresponds to the `--certificatesresolvers.le.*` commands in the
@@ -115,13 +111,13 @@ services:
       # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
       # in the docker-compose.traefik.yml file
       traefik.http.routers.pgadmin-http.entrypoints: http
-      traefik.http.routers.pgadmin-http.rule: Host(`pgadmin.mathieuklimczak.com`)
+      traefik.http.routers.pgadmin-http.rule: Host(`pgadminv2.mathieuklimczak.com`)
       # Use the Traefik-public network (declared below)
       traefik.docker.network: traefik-public
       # HTTPS
       # Make Traefik use this domain in HTTPS
       traefik.http.routers.pgadmin-https.entrypoints: https
-      traefik.http.routers.pgadmin-https.rule: Host(`pgadmin.mathieuklimczak.com`)
+      traefik.http.routers.pgadmin-https.rule: Host(`pgadminv2.mathieuklimczak.com`)
       traefik.http.routers.pgadmin-https.tls: true
       # Use the "le" (Let's Encrypt) resolver
       # Corresponds to the `--certificatesresolvers.le.*` commands in the
@@ -149,13 +145,13 @@ services:
       # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
       # in the docker-compose.traefik.yml file
       traefik.http.routers.kuma-http.entrypoints: http
-      traefik.http.routers.kuma-http.rule: Host(`kuma.mathieuklimczak.com`)
+      traefik.http.routers.kuma-http.rule: Host(`kumav2.mathieuklimczak.com`)
       # Use the Traefik-public network (declared below)
       traefik.docker.network: traefik-public
       # HTTPS
       # Make Traefik use this domain in HTTPS
       traefik.http.routers.kuma-https.entrypoints: https
-      traefik.http.routers.kuma-https.rule: Host(`kuma.mathieuklimczak.com`)
+      traefik.http.routers.kuma-https.rule: Host(`kumav2.mathieuklimczak.com`)
       traefik.http.routers.kuma-https.tls: true
       # Use the "le" (Let's Encrypt) resolver
       # Corresponds to the `--certificatesresolvers.le.*` commands in the

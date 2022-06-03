@@ -85,11 +85,14 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
 
       - name: Add deploy key to ssh-agent
-        run: ssh staging 'eval "$(ssh-agent -s)" && ssh-add ~/.ssh/deploy && ssh-add -l -E md5 && cd code/stack_prod && git checkout main && git pull origin main && exit'
+        # run: ssh staging 'eval "$(ssh-agent -s)" && ssh-add ~/.ssh/deploy && ssh-add -l -E md5 && cd code/stack_prod && git checkout main && git pull origin main && exit'
+        run: ssh staging 'eval "$(ssh-agent -s)" && ssh-add ~/.ssh/deploy && ssh-add -l -E md5 && cd /opt/stack_prod && git checkout main && git pull origin main && exit'
 
       - name: Update stack
         run:
-          ssh staging 'export DEPLOYMENT_COMMIT=${{ github.sha }} && export DEPLOYMENT_DATE=${{ github.event.repository.pushed_at }} && export DB_USERNAME=${{ secrets.DB_USERNAME }} && export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && export PGADMIN_DEFAULT_EMAIL=${{ secrets.PGADMIN_DEFAULT_EMAIL }} && export HASHED_PGADMIN_DEFAULT_PASSWORD=${{ secrets.HASHED_PGADMIN_DEFAULT_PASSWORD }} && cd code/stack_prod && docker-compose pull && docker-compose -f docker-compose.yml up --build -d && exit'
+          # ssh staging 'export DEPLOYMENT_COMMIT=${{ github.sha }} && export DEPLOYMENT_DATE=${{ github.event.repository.pushed_at }} && export DB_USERNAME=${{ secrets.DB_USERNAME }} && export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && export PGADMIN_DEFAULT_EMAIL=${{ secrets.PGADMIN_DEFAULT_EMAIL }} && export HASHED_PGADMIN_DEFAULT_PASSWORD=${{ secrets.HASHED_PGADMIN_DEFAULT_PASSWORD }} && cd code/stack_prod && docker-compose pull && docker-compose -f docker-compose.yml up --build -d && exit'
+          ssh staging 'export DEPLOYMENT_COMMIT=${{ github.sha }} && export DEPLOYMENT_DATE=${{ github.event.repository.pushed_at }} && export DB_USERNAME=${{ secrets.DB_USERNAME }} && export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && export PGADMIN_DEFAULT_EMAIL=${{ secrets.PGADMIN_DEFAULT_EMAIL }} && export HASHED_PGADMIN_DEFAULT_PASSWORD=${{ secrets.HASHED_PGADMIN_DEFAULT_PASSWORD }} && cd /opt/stack_prod && docker-compose pull && make prod-stack-up && exit'
+
         # env:
         #   DEPLOYMENT_COMMIT: ${{ github.sha }}
         #   DEPLOYMENT_DATE: ${{ github.event.repository.updated_at}}

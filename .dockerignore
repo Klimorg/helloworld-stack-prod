@@ -4,7 +4,7 @@ __pycache__
 .vscode
 setup.*
 *.md
-Dockerfile
+Dockerfile*
 .devcontainer
 .github*
 .pytest_cache*
@@ -14,5 +14,6 @@ Dockerfile
 .docker-compose.*
 LICENSE
 makefile
-requirements-*
+requirements*
 setup.*
+.coverage
