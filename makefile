@@ -30,6 +30,10 @@ traefik-prod-up:
 traefik-prod-down:
 	docker compose -f docker-compose.traefik.yml -f docker-compose.traefik-prod.yml -v down
 
+.PHONY: stack-prod-pull
+stack-prod-up:
+	docker compose -f docker-compose.yml -f docker-compose-prod.yml pull
+
 .PHONY: stack-prod-up
 stack-prod-up:
 	docker compose -f docker-compose.yml -f docker-compose-prod.yml up --build
