@@ -20,9 +20,9 @@ import os
 #       Must be a positive integer. Generally set in the 64-2048
 #       range.
 #
-
-port = os.environ.get("PORT", 8000)
-bind = f"0.0.0.0:{port}"
+#
+# port = os.environ.get("PORT", 8000)
+bind = "0.0.0.0"
 # backlog = 2048
 
 #
