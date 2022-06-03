@@ -17,8 +17,8 @@ services:
   backend:
     image: vorphus/api-prod:latest
     container_name: fastapi
-    # command: gunicorn -c app/gunicorn.py -k uvicorn.workers.UvicornWorker app.main:app
-    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0
+    command: gunicorn -c app/gunicorn.py -k uvicorn.workers.UvicornWorker app.main:app
+    # command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0
     restart: always
     environment:
       <<: *db-env
@@ -79,9 +79,6 @@ services:
       - 5432
     environment:
       <<: *db-env
-      # POSTGRES_USER: ${DB_USERNAME}
-      # POSTGRES_PASSWORD: ${DB_PASSWORD}
-      # POSTGRES_DB: postgres
     networks:
       - db-network
 
@@ -96,9 +93,6 @@ services:
       - db
     environment:
       <<: *db-monitoring-env
-      # PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      # PGADMIN_DEFAULT_PASSWORD: ${HASHED_PGADMIN_DEFAULT_PASSWORD}
-      # PGADMIN_LISTEN_PORT: 5050
     labels:
       traefik.enable: true
       traefik.http.services.pgadmin.loadBalancer.server.port: 5050
