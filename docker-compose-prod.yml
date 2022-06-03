@@ -16,9 +16,6 @@ services:
 
   backend:
     image: vorphus/api-prod:latest
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
     container_name: fastapi
     command: gunicorn -c app/gunicorn.py -k uvicorn.workers.UvicornWorker app.main:app
     restart: always

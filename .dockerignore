@@ -10,8 +10,6 @@ Dockerfile*
 .pytest_cache*
 .stack_prod*
 .pre-commit.*
-.docker-compose-*
-.docker-compose.*
 LICENSE
 makefile
 requirements*
