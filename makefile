@@ -22,6 +22,14 @@ traefik-dev-up:
 traefik-dev-down:
 	docker compose -f docker-compose.traefik.yml -f docker-compose.traefik-dev.yml -v down
 
+.PHONY: traefik-prod-up
+traefik-prod-up:
+	docker compose -f docker-compose.traefik.yml -f docker-compose.traefik-prod.yml up -d
+
+.PHONY: traefik-prod-down
+traefik-prod-down:
+	docker compose -f docker-compose.traefik.yml -f docker-compose.traefik-prod.yml -v down
+
 .PHONY: stack-prod-up
 stack-prod-up:
 	docker compose -f docker-compose.yml -f docker-compose-prod.yml up --build
