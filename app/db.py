@@ -15,7 +15,7 @@ async_db_uri: str = PostgresDsn.build(
     password=settings.POSTGRES_PASSWORD,
     host=settings.POSTGRES_HOST,
     port=settings.POSTGRES_PORT,
-    path=f"/{settings.POSTGRES_DB or ''}",
+    path=f"/{settings.POSTGRES_DB}",
 )
 
 
