@@ -1,4 +1,4 @@
-streamlit==1.10.0
-requests==2.27.1
-requests-toolbelt==0.9.1
+arrow==1.2.2
 pydantic==1.9.1
+requests==2.27.1
+streamlit==1.10.0

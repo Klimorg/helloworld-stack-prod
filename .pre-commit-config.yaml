@@ -37,7 +37,7 @@ repos:
   #     - id: dockerfilelint
 
   - repo: https://github.com/sirosen/check-jsonschema
-    rev: 0.15.1
+    rev: 0.16.0
     hooks:
       - id: check-github-actions
       - id: check-github-workflows
