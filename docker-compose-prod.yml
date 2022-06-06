@@ -1,16 +1,16 @@
-x-db-env: &db-env
+x-db-env:
+  &db-env
   POSTGRES_USER: ${DB_USERNAME}
   POSTGRES_PASSWORD: ${DB_PASSWORD}
   POSTGRES_DB: postgres
   POSTGRES_HOST: db
   POSTGRES_PORT: "5432"
 
-x-db-monitoring-env: &db-monitoring-env
+x-db-monitoring-env:
+  &db-monitoring-env
   PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
   PGADMIN_DEFAULT_PASSWORD: ${HASHED_PGADMIN_DEFAULT_PASSWORD}
   PGADMIN_LISTEN_PORT: 5050
-
-
 
 services:
 
@@ -68,6 +68,56 @@ services:
     depends_on:
       - db
     #   - apm-server
+
+  frontend:
+    image: vorphus/ui-prod:latest
+    container_name: streamlit
+    command: streamlit run frontend/main_page.py
+    # command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0
+    restart: always
+    labels:
+      # Enable Traefik for this specific "backend" service
+      # needed because of the `--providers.docker.exposedbydefault=false` command in the
+      # docker-compose.traefik.yml file
+      traefik.enable: true
+      # Define the port inside of the Docker service to use
+      # note thet the name "app" is up to you, the command is `traefik.http.services.{service-name-of-your-choice}.{options-you-want}`
+      # see https://doc.traefik.io/traefik/routing/providers/marathon/#services
+      traefik.http.services.frontend.loadbalancer.server.port: 8501
+      # HTTP
+      # Make Traefik use this domain in HTTP
+      # traefik.http.routers.{router-name-of-your-choice}.
+      # see https://doc.traefik.io/traefik/routing/providers/marathon/#routers
+      # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
+      # in the docker-compose.traefik.yml file
+      traefik.http.routers.frontend-http.entrypoints: http
+      traefik.http.routers.frontend-http.rule: Host(`frontend.mathieuklimczak.com`)
+      # Use the Traefik-public network (declared below)
+      traefik.docker.network: traefik-public
+      # HTTPS
+      # Make Traefik use this domain in HTTPS
+      traefik.http.routers.frontend-https.entrypoints: https
+      traefik.http.routers.frontend-https.rule: Host(`frontend.mathieuklimczak.com`)
+      traefik.http.routers.frontend-https.tls: true
+      # Use the "le" (Let's Encrypt) resolver
+      # Corresponds to the `--certificatesresolvers.le.*` commands in the
+      # docker-compose.traefik.yml file
+      traefik.http.routers.frontend-https.tls.certresolver: le
+      # https-redirect middleware to redirect HTTP to HTTPS
+      traefik.http.middlewares.https-redirect.redirectscheme.scheme: https
+      traefik.http.middlewares.https-redirect.redirectscheme.permanent: true
+      # Middlerware to redirect HTTP to HTTPS
+      # Anything that happend to our app on HTTP will be redirect by the middlerware
+      # above on HTTPS
+      traefik.http.routers.frontend-http.middlewares: https-redirect
+    networks:
+      # Use the public network created to be shared between Traefik and
+      # any other service that needs to be publicly available with https
+      - backend-frontend
+      - traefik-public
+      # - elastic
+    depends_on:
+      - backend
 
   db:
     image: postgres:14.2-bullseye
@@ -164,82 +214,82 @@ services:
 volumes:
   uptime-kuma:
   postgres_data:
-  # esdata:
-  #   driver: local
+    # esdata:
+    #   driver: local
 
 networks:
   traefik-public:
     external: true
   db-network:
-  # elastic:
-  #   driver: bridge
+    # elastic:
+    #   driver: bridge
 
-# # MONITORING APM TEST
-#   apm-server:
-#     image: docker.elastic.co/apm/apm-server:7.14.1
-#     container_name: apm-server
-#     depends_on:
-#       elasticsearch:
-#         condition: service_healthy
-#       kibana:
-#         condition: service_healthy
-#     cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
-#     cap_drop: ["ALL"]
-#     ports:
-#     - 8200:8200
-#     networks:
-#     - elastic
-#     command: >
-#        apm-server -e
-#          -E apm-server.rum.enabled=true
-#          -E setup.kibana.host=kibana:5601
-#          -E setup.template.settings.index.number_of_replicas=0
-#          -E apm-server.kibana.enabled=true
-#          -E apm-server.kibana.host=kibana:5601
-#          -E output.elasticsearch.hosts=["elasticsearch:9200"]
-#     healthcheck:
-#       interval: 10s
-#       retries: 12
-#       test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:8200/
+    # # MONITORING APM TEST
+    #   apm-server:
+    #     image: docker.elastic.co/apm/apm-server:7.14.1
+    #     container_name: apm-server
+    #     depends_on:
+    #       elasticsearch:
+    #         condition: service_healthy
+    #       kibana:
+    #         condition: service_healthy
+    #     cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
+    #     cap_drop: ["ALL"]
+    #     ports:
+    #     - 8200:8200
+    #     networks:
+    #     - elastic
+    #     command: >
+    #        apm-server -e
+    #          -E apm-server.rum.enabled=true
+    #          -E setup.kibana.host=kibana:5601
+    #          -E setup.template.settings.index.number_of_replicas=0
+    #          -E apm-server.kibana.enabled=true
+    #          -E apm-server.kibana.host=kibana:5601
+    #          -E output.elasticsearch.hosts=["elasticsearch:9200"]
+    #     healthcheck:
+    #       interval: 10s
+    #       retries: 12
+    #       test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:8200/
 
-  # elasticsearch:
-  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.14.1
-  #   container_name: elastic
-  #   environment:
-  #   - bootstrap.memory_lock=true
-  #   - cluster.name=docker-cluster
-  #   - cluster.routing.allocation.disk.threshold_enabled=false
-  #   - discovery.type=single-node
-  #   - ES_JAVA_OPTS=-XX:UseAVX=2 -Xms1g -Xmx1g
-  #   ulimits:
-  #     memlock:
-  #       hard: -1
-  #       soft: -1
-  #   volumes:
-  #   - esdata:/usr/share/elasticsearch/data
-  #   ports:
-  #   - 9200:9200
-  #   networks:
-  #   - elastic
-  #   healthcheck:
-  #     interval: 20s
-  #     retries: 10
-  #     test: curl -s http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
+    # elasticsearch:
+    #   image: docker.elastic.co/elasticsearch/elasticsearch:7.14.1
+    #   container_name: elastic
+    #   environment:
+    #   - bootstrap.memory_lock=true
+    #   - cluster.name=docker-cluster
+    #   - cluster.routing.allocation.disk.threshold_enabled=false
+    #   - discovery.type=single-node
+    #   - ES_JAVA_OPTS=-XX:UseAVX=2 -Xms1g -Xmx1g
+    #   ulimits:
+    #     memlock:
+    #       hard: -1
+    #       soft: -1
+    #   volumes:
+    #   - esdata:/usr/share/elasticsearch/data
+    #   ports:
+    #   - 9200:9200
+    #   networks:
+    #   - elastic
+    #   healthcheck:
+    #     interval: 20s
+    #     retries: 10
+    #     test: curl -s http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
 
-  # kibana:
-  #   image: docker.elastic.co/kibana/kibana:7.14.1
-  #   container_name: kibana
-  #   depends_on:
-  #     elasticsearch:
-  #       condition: service_healthy
-  #   environment:
-  #     ELASTICSEARCH_URL: http://elasticsearch:9200
-  #     ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-  #   ports:
-  #   - 5601:5601
-  #   networks:
-  #   - elastic
-  #   healthcheck:
-  #     interval: 10s
-  #     retries: 20
-  #     test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:5601/api/status
+    # kibana:
+    #   image: docker.elastic.co/kibana/kibana:7.14.1
+    #   container_name: kibana
+    #   depends_on:
+    #     elasticsearch:
+    #       condition: service_healthy
+    #   environment:
+    #     ELASTICSEARCH_URL: http://elasticsearch:9200
+    #     ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    #   ports:
+    #   - 5601:5601
+    #   networks:
+    #   - elastic
+    #   healthcheck:
+    #     interval: 10s
+    #     retries: 20
+    #     test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:5601/api/status
