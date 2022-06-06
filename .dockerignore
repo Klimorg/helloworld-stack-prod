@@ -12,6 +12,6 @@ Dockerfile*
 .pre-commit.*
 LICENSE
 makefile
-requirements*
+requirements-*
 setup.*
 .coverage

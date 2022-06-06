@@ -36,7 +36,7 @@ jobs:
       # - name: Run Bandit
       #   run: |
       #     python -m bandit -r app/
-#  TODO! REACTIVATE THESE TWO CHECKS WHEN I'LL KNOW HOW THEY DEAL WITH GUNICORN
+      #  TODO! REACTIVATE THESE TWO CHECKS WHEN I'LL KNOW HOW THEY DEAL WITH GUNICORN
       - name: Run test suite
         run: |
           python -m pytest -v
@@ -61,6 +61,12 @@ jobs:
           file: Dockerfile.backend
           push: true
           tags: vorphus/api-prod:latest,vorphus/api-prod:${{ github.sha }}
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          file: Dockerfile.frontend
+          push: true
+          tags: vorphus/ui-prod:latest,vorphus/ui-prod:${{ github.sha }}
 
   deploy-stack:
     needs: build-image

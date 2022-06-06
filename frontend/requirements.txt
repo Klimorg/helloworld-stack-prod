@@ -1,0 +1,4 @@
+streamlit==1.10.0
+requests==2.27.1
+requests-toolbelt==0.9.1
+pydantic==1.9.1

@@ -1,10 +1,10 @@
-.PHONY: docker-run
-docker-run:
-	docker run -it -p 8000:80 app
+# .PHONY: docker-run
+# docker-run:
+# 	docker run -it -p 8000:80 app
 
-.PHONY: sync
-sync:
-	rsync -a ./* root@mathieuklimczak.com:/root/code/tuto_traefik/
+# .PHONY: sync
+# sync:
+# 	rsync -a ./* root@mathieuklimczak.com:/root/code/tuto_traefik/
 
 .PHONY: network-up
 network-up:
@@ -31,27 +31,27 @@ traefik-prod-down:
 	docker compose -f docker-compose.traefik.yml -f docker-compose.traefik-prod.yml -v down
 
 .PHONY: stack-prod-pull
-stack-prod-up:
+stack-prod-pull:
 	docker compose -f docker-compose.yml -f docker-compose-prod.yml pull
 
 .PHONY: stack-prod-up
 stack-prod-up:
-	docker compose -f docker-compose.yml -f docker-compose-prod.yml up --build
+	docker compose -f docker-compose.yml -f docker-compose-prod.yml -p stack up --build
 
 .PHONY: stack-prod-down
 stack-prod-down:
-	docker compose -f docker-compose.yml -f docker-compose-prod.yml -v down
+	docker compose -f docker-compose.yml -f docker-compose-prod.yml -p stack -v down
 
 .PHONY: stack-dev-up
 stack-dev-up:
-	docker compose -f docker-compose.yml -f docker-compose-dev.yml up --build
+	docker compose -f docker-compose.yml -f docker-compose-dev.yml -p stack up --build
 
 .PHONY: stack-dev-down
 stack-dev-down:
-	docker compose -f docker-compose.yml -f docker-compose-dev.yml -v down
+	docker compose -f docker-compose.yml -f docker-compose-dev.yml -p stack -v down
 
 .PHONY: install-dev
 install-dev:
-	python -m pip install -e ".[dev]" --no-cache-dir
+	python -m pip install -r requirements-dev.txt
 	pre-commit install
 	pre-commit autoupdate

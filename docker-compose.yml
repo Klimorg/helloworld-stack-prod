@@ -3,6 +3,9 @@ services:
   backend:
     container_name: fastapi
 
+  frontend:
+    container_name: streamlit
+
   db:
     image: postgres:14.2-bullseye
     container_name: postgre
@@ -34,7 +37,9 @@ volumes:
   uptime-kuma:
   postgres_data:
 
+
 networks:
+  backend-frontend:
   traefik-public:
     external: true
   db-network:

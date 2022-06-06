@@ -66,7 +66,7 @@ def get_last_deployment_infos():
 
 
 @app.get(
-    "/healthcheck/",
+    "/healthcheck",
     tags=["healthcheck"],
     status_code=status.HTTP_200_OK,
     response_description="ok",
@@ -77,7 +77,7 @@ def get_api_status() -> str:
 
 
 @app.get(
-    "/healthcheck_db_link/",
+    "/healthcheck_db_link",
     tags=["healthcheck"],
     status_code=status.HTTP_200_OK,
     response_description="ok",

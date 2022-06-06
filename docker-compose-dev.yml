@@ -1,9 +1,11 @@
-x-db-env: &db-env
+x-db-env:
+  &db-env
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: postgres
   POSTGRES_DB: postgres
 
-x-db-monitoring-env: &db-monitoring-env
+x-db-monitoring-env:
+  &db-monitoring-env
   PGADMIN_DEFAULT_EMAIL: klimczak.mathieu@pm.me
   PGADMIN_DEFAULT_PASSWORD: 1988
   PGADMIN_LISTEN_PORT: 5050
@@ -43,10 +45,48 @@ services:
     networks:
       # Use the public network created to be shared between Traefik and
       # any other service that needs to be publicly available with http or https
+      - backend-frontend
       - traefik-public
       - db-network
     depends_on:
       - db
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    command: streamlit run frontend/main_page.py
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/opt/frontend
+    labels:
+      # Enable Traefik for this specific "backend" service
+      # needed because of the `--providers.docker.exposedbydefault=false` command in the
+      # docker-compose.traefik.yml file
+      traefik.enable: true
+      # Define the port inside of the Docker service to use
+      # note thet the name "app" is up to you, the command is `traefik.http.services.{service-name-of-your-choice}.{options-you-want}`
+      # see https://doc.traefik.io/traefik/routing/providers/marathon/#services
+      traefik.http.services.frontend-dev.loadbalancer.server.port: 8501
+      # HTTP
+      # Make Traefik use this domain in HTTP
+      # traefik.http.routers.{router-name-of-your-choice}.
+      # see https://doc.traefik.io/traefik/routing/providers/marathon/#routers
+      # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
+      # in the docker-compose.traefik.yml file
+      traefik.http.routers.frontend-dev-http.entrypoints: http
+      traefik.http.routers.frontend-dev-http.rule: Host(`frontend.localhost`)
+      #  && PathPrefix(`/test`)
+      # Use the Traefik-public network (declared below)
+      traefik.docker.network: traefik-public
+    networks:
+      # Use the public network created to be shared between Traefik and
+      # any other service that needs to be publicly available with http or https
+      - backend-frontend
+      - traefik-public
+    depends_on:
+      - backend
+
   db:
     restart: unless-stopped
     environment:

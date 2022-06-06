@@ -15,7 +15,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # in real time. Equivalent to python -u: https://docs.python.org/3/using/cmdline.html#cmdoption-u
 ENV PYTHONUNBUFFERED 1
 
-COPY ./requirements.txt /opt/app/requirements.txt
+COPY ./app/requirements.txt /opt/app/requirements.txt
 
 RUN /usr/local/bin/python -m pip install --upgrade pip && pip install --no-cache-dir --upgrade -r /opt/app/requirements.txt
 
