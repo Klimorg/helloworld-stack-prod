@@ -24,11 +24,6 @@ class InferenceRead(InferenceBase):
     id: int
 
 
-class DeploymentSettings(BaseSettings):
-    deployment_commit: str = Field(env="DEPLOYMENT_COMMIT")
-    deployment_date: datetime = Field(env="DEPLOYMENT_DATE")
-
-
 class DeploymentInfo(BaseModel):
     deployment_commit: str
     deployment_date: datetime
