@@ -1,5 +1,5 @@
 # linting, formating, typing
-black==22.3.0
+black==22.6.0
 # black formatting for jupyter notebooks
 darglint==1.8.1
 flake8==4.0.1
