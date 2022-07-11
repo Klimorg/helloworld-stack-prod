@@ -8,7 +8,7 @@ mypy==0.960
 # requirements writing
 pipreqs==0.4.11
 # precommit action
-pre-commit==2.19.0
+pre-commit==2.20.0
 # code quality infos
 radon==5.1.0
 # refactoring
