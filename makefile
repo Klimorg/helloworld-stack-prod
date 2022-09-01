@@ -42,6 +42,10 @@ stack-prod-up:
 stack-prod-down:
 	docker compose -f docker-compose.yml -f docker-compose-prod.yml -p stack -v down
 
+.PHONY: pull-updated-stack
+pull-updated-stack:
+	cd /opt/stack_prod && docker compose -f docker-compose.yml -f docker-compose-prod.yml pull
+
 .PHONY: stack-dev-up
 stack-dev-up:
 	docker compose -f docker-compose.yml -f docker-compose-dev.yml -p stack up --build --remove-orphans
@@ -55,7 +59,3 @@ install-dev:
 	python -m pip install -r requirements-dev.txt
 	pre-commit install
 	pre-commit autoupdate
-
-.PHONY: pull-updated-stack
-pull-updated-stack:
-	cd /opt/stack_prod && docker compose -f docker-compose.yml -f docker-compose-prod.yml pull
