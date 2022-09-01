@@ -60,6 +60,7 @@ jobs:
               uses: docker/build-push-action@v3
               with:
                   file: Dockerfile.backend
+          # push new image only if on main branch
                   push: ${{ github.ref == 'refs/heads/main' }}
                   tags: |
                       vorphus/${{ env.API_NAME }}:latest
@@ -73,6 +74,7 @@ jobs:
               uses: docker/build-push-action@v3
               with:
                   file: Dockerfile.frontend
+          # push new image only if on main branch
                   push: ${{ github.ref == 'refs/heads/main' }}
                   tags: |
                       vorphus/${{ env.UI_NAME }}:latest
@@ -113,6 +115,9 @@ jobs:
                   DB_USERNAME=${{ secrets.DB_USERNAME }} && export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && export PGADMIN_DEFAULT_EMAIL=${{ secrets.PGADMIN_DEFAULT_EMAIL
                   }} && export HASHED_PGADMIN_DEFAULT_PASSWORD=${{ secrets.HASHED_PGADMIN_DEFAULT_PASSWORD }} && cd /opt/stack_prod && make pull-updated-stack
                   && make stack-prod-up && exit'
+
+            - name: Disconnect
+              run: echo "ssh connection terminated"
 
     build-docs:
         needs: tests
