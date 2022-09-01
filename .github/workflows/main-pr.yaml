@@ -52,13 +52,13 @@ jobs:
               with:
                   file: Dockerfile.backend
                   push: false
-                  tags: vorphus/$API_NAME:latest,vorphus/$API_NAME:${{ github.sha }}
+                  tags: vorphus/${{ env.API_NAME }}:latest,vorphus/${{ API_NAME }}:${{ github.sha }}
             - name: Build and push
               uses: docker/build-push-action@v3
               with:
                   file: Dockerfile.frontend
                   push: false
-                  tags: vorphus/$UI_NAME:latest,vorphus/$UI_NAME:${{ github.sha }}
+                  tags: vorphus/${{ UI_NAME }}:latest,vorphus/${{ UI_NAME }}:${{ github.sha }}
 
     build-docs:
         needs: tests

@@ -57,13 +57,13 @@ jobs:
               with:
                   file: Dockerfile.backend
                   push: true
-                  tags: vorphus/$API_NAME:latest,vorphus/$API_NAME:${{ github.sha }}
+                  tags: vorphus/${{ env.API_NAME }}:latest,vorphus/${{ env.API_NAME }}:${{ github.sha }}
             - name: Build and push
               uses: docker/build-push-action@v3
               with:
                   file: Dockerfile.frontend
                   push: true
-                  tags: vorphus/$UI_NAME:latest,vorphus/$UI_NAME:${{ github.sha }}
+                  tags: vorphus/${{ env.UI_NAME }}:latest,vorphus/${{ env.UI_NAME }}:${{ github.sha }}
 
     deploy-stack:
         needs: build-image
