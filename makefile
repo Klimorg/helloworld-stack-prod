@@ -1,11 +1,3 @@
-# .PHONY: docker-run
-# docker-run:
-# 	docker run -it -p 8000:80 app
-
-# .PHONY: sync
-# sync:
-# 	rsync -a ./* root@mathieuklimczak.com:/root/code/tuto_traefik/
-
 .PHONY: network-up
 network-up:
 	docker network create traefik-public
@@ -36,7 +28,7 @@ stack-prod-pull:
 
 .PHONY: stack-prod-up
 stack-prod-up:
-	docker compose -f docker-compose.yml -f docker-compose-prod.yml -p stack up --build --remove-orphans
+	docker compose -f docker-compose.yml -f docker-compose-prod.yml -p stack up --build
 
 .PHONY: stack-prod-down
 stack-prod-down:
