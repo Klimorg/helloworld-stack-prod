@@ -55,3 +55,7 @@ install-dev:
 	python -m pip install -r requirements-dev.txt
 	pre-commit install
 	pre-commit autoupdate
+
+.PHONY: pull-updated-stack
+pull-updated-stack:
+	cd /opt/stack_prod && docker compose -f docker-compose.yml -f docker-compose-prod.yml pull

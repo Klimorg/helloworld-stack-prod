@@ -3,7 +3,7 @@ name: Pre-commit
 on: [pull_request, push]
 
 jobs:
-    build:
+    check-precommit:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
