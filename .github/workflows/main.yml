@@ -56,6 +56,7 @@ jobs:
                   password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
 
             - name: Build and push
+              id: docker_build_api
               uses: docker/build-push-action@v3
               with:
                   file: Dockerfile.backend
@@ -65,9 +66,10 @@ jobs:
                       vorphus/${{ env.API_NAME }}:${{ github.sha }}
 
             - name: Image digest
-              run: echo ${{ steps.docker_build.outputs.digest }}
+              run: echo ${{ steps.docker_build_api.outputs.digest }}
 
             - name: Build and push
+              id: docker_build_ui
               uses: docker/build-push-action@v3
               with:
                   file: Dockerfile.frontend
@@ -77,10 +79,12 @@ jobs:
                       vorphus/${{ env.UI_NAME }}:${{ github.sha }}
 
             - name: Image digest
-              run: echo ${{ steps.docker_build.outputs.digest }}
+              run: echo ${{ steps.docker_build_ui.outputs.digest }}
 
     deploy-stack:
         needs: build-image
+    # update stack only if on main branch, not on dev or any other
+        if: ${{ github.ref == 'refs/heads/main' }}
         runs-on: ubuntu-latest
         steps:
             - name: Configure SSH
