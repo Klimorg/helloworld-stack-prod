@@ -22,15 +22,10 @@ theme:
         icon: material/toggle-switch
         name: Basculer en mode clair
 
-
-
 plugins:
   - search:
       lang: fr
   # - mknotebooks
-
-extra_css:
-  - stylesheets/extra.css
 
 nav:
   - Accueil: index.md
@@ -50,7 +45,6 @@ markdown_extensions:
   # config pour latex
   - pymdownx.arithmatex:
       generic: true
-
 
 # config pour latex
 extra_javascript:

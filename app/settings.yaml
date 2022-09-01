@@ -1,11 +1,12 @@
+---
 default:
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: postgres
     POSTGRES_HOST: db
-    POSTGRES_PORT: "5432"
+    POSTGRES_PORT: '5432'
     POSTGRES_DB: postgres
     DEPLOYMENT_COMMIT: 934115ab89f61a4235f23f664791520edc81f137
-    DEPLOYMENT_DATE: "2022-06-01T17:11:58+00:00"
+    DEPLOYMENT_DATE: '2022-06-01T17:11:58+00:00'
 # development:
 #     name: developer
 #     data_dir: ./data

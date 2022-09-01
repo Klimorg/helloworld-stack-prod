@@ -1,0 +1,11 @@
+---
+name: Pre-commit
+on: [pull_request, push]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-python@v2
+            - uses: pre-commit/action@v3.0.0

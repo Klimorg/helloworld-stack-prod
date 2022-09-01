@@ -1,127 +1,115 @@
+---
 name: Build & Deploy
-on: [push, workflow_call]
+on: [push, pull_request]
 
 jobs:
-  tests:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        python-version: ["3.8", "3.9"]
-        exclude:
-          - os: macos-latest
-            python-version: "3.8"
+    tests:
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, macos-latest]
+                python-version: ['3.8', '3.9']
+                exclude:
+                    - os: macos-latest
+                      python-version: '3.8'
 
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: ${{ matrix.python-version }}
+        steps:
+            - uses: actions/checkout@v3
+            - name: Set up Python
+              uses: actions/setup-python@v3
+              with:
+                  python-version: ${{ matrix.python-version }}
 
-      - name: Display Python version
-        run: python --version
+            - name: Display Python version
+              run: python --version
 
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r app/requirements.txt
-          python -m pip install -r frontend/requirements.txt
-          python -m pip install -r requirements-test.txt
+            - name: Install Python dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  python -m pip install -r app/requirements.txt
+                  python -m pip install -r frontend/requirements.txt
+                  python -m pip install -r requirements-test.txt
 
-      # - name: Run Safety check
-      #   run: |
-      #     python -m safety check
+            - name: Run test suite
+              run: |
+                  python -m pytest -v
 
-      # - name: Run Bandit
-      #   run: |
-      #     python -m bandit -r app/
-      #  TODO! REACTIVATE THESE TWO CHECKS WHEN I'LL KNOW HOW THEY DEAL WITH GUNICORN
-      - name: Run test suite
-        run: |
-          python -m pytest -v
+    build-image:
+        needs: tests
+        runs-on: ubuntu-latest
+        steps:
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v2
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v2
+            - name: Login to DockerHub
+              uses: docker/login-action@v2
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+            - name: Build and push
+              uses: docker/build-push-action@v3
+              with:
+                  file: Dockerfile.backend
+                  push: true
+                  tags: vorphus/api-prod:latest,vorphus/api-prod:${{ github.sha }}
+            - name: Build and push
+              uses: docker/build-push-action@v3
+              with:
+                  file: Dockerfile.frontend
+                  push: true
+                  tags: vorphus/ui-prod:latest,vorphus/ui-prod:${{ github.sha }}
 
-  build-image:
-    needs: tests
-    runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
-    steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          file: Dockerfile.backend
-          push: true
-          tags: vorphus/api-prod:latest,vorphus/api-prod:${{ github.sha }}
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          file: Dockerfile.frontend
-          push: true
-          tags: vorphus/ui-prod:latest,vorphus/ui-prod:${{ github.sha }}
+    deploy-stack:
+        needs: build-image
+        runs-on: ubuntu-latest
+        steps:
+            - name: Configure SSH
+              run: |
+                  mkdir -p ~/.ssh/
+                  echo "$SSH_KEY" > ~/.ssh/deploy
+                  chmod 600 ~/.ssh/deploy
+                  cat >>~/.ssh/config <<END
+                  Host staging
+                    HostName $SSH_HOST
+                    User $SSH_USER
+                    IdentityFile ~/.ssh/deploy
+                    StrictHostKeyChecking no
+                  END
+              env:
+                  SSH_USER: ${{ secrets.SSH_USERNAME }}
+                  SSH_KEY: ${{ secrets.SSH_KEY }}
+                  SSH_HOST: ${{ secrets.SSH_HOST }}
 
-  deploy-stack:
-    needs: build-image
-    runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
-    steps:
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh/
-          echo "$SSH_KEY" > ~/.ssh/deploy
-          chmod 600 ~/.ssh/deploy
-          cat >>~/.ssh/config <<END
-          Host staging
-            HostName $SSH_HOST
-            User $SSH_USER
-            IdentityFile ~/.ssh/deploy
-            StrictHostKeyChecking no
-          END
-        env:
-          SSH_USER: ${{ secrets.SSH_USERNAME }}
-          SSH_KEY: ${{ secrets.SSH_KEY }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-
-      - name: Add deploy key to ssh-agent
+            - name: Add deploy key to ssh-agent
         # run: ssh staging 'eval "$(ssh-agent -s)" && ssh-add ~/.ssh/deploy && ssh-add -l -E md5 && cd code/stack_prod && git checkout main && git pull origin main && exit'
-        run: ssh staging 'eval "$(ssh-agent -s)" && ssh-add ~/.ssh/deploy && ssh-add -l -E md5 && cd /opt/stack_prod && git checkout main && git pull origin main && exit'
+              run: ssh staging 'eval "$(ssh-agent -s)" && ssh-add ~/.ssh/deploy && ssh-add -l -E md5 && cd /opt/stack_prod && git checkout main && git pull
+                  origin main && exit'
 
-      - name: Update stack
-        run:
-          # ssh staging 'export DEPLOYMENT_COMMIT=${{ github.sha }} && export DEPLOYMENT_DATE=${{ github.event.repository.pushed_at }} && export DB_USERNAME=${{ secrets.DB_USERNAME }} && export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && export PGADMIN_DEFAULT_EMAIL=${{ secrets.PGADMIN_DEFAULT_EMAIL }} && export HASHED_PGADMIN_DEFAULT_PASSWORD=${{ secrets.HASHED_PGADMIN_DEFAULT_PASSWORD }} && cd code/stack_prod && docker-compose pull && docker-compose -f docker-compose.yml up --build -d && exit'
-          ssh staging 'export DEPLOYMENT_COMMIT=${{ github.sha }} && export DEPLOYMENT_DATE=${{ github.event.repository.pushed_at }} && export DB_USERNAME=${{ secrets.DB_USERNAME }} && export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && export PGADMIN_DEFAULT_EMAIL=${{ secrets.PGADMIN_DEFAULT_EMAIL }} && export HASHED_PGADMIN_DEFAULT_PASSWORD=${{ secrets.HASHED_PGADMIN_DEFAULT_PASSWORD }} && cd /opt/stack_prod && docker compose -f docker-compose.yml -f docker-compose-prod.yml pull && docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d && exit'
+            - name: Update stack
+              run: ssh staging 'export DEPLOYMENT_COMMIT=${{ github.sha }} && export DEPLOYMENT_DATE=${{ github.event.repository.pushed_at }} && export
+                  DB_USERNAME=${{ secrets.DB_USERNAME }} && export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && export PGADMIN_DEFAULT_EMAIL=${{ secrets.PGADMIN_DEFAULT_EMAIL
+                  }} && export HASHED_PGADMIN_DEFAULT_PASSWORD=${{ secrets.HASHED_PGADMIN_DEFAULT_PASSWORD }} && cd /opt/stack_prod && docker compose -f
+                  docker-compose.yml -f docker-compose-prod.yml pull && docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d && exit'
 
-        # env:
-        #   DEPLOYMENT_COMMIT: ${{ github.sha }}
-        #   DEPLOYMENT_DATE: ${{ github.event.repository.updated_at}}
-
-  build-docs:
-    needs: tests
-    runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.9"
-      - name: Caching
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.pythonLocation }}
-          key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements.txt') }}
-      - name: Install dependencies
-        run: |
-          python -m pip install -e ".[docs]" --no-cache-dir
-      - name: Deploy documentation
-        run: cd stack_prod && mkdocs gh-deploy --force
+    build-docs:
+        needs: tests
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v3
+            - name: Set up Python
+              uses: actions/setup-python@v3
+              with:
+                  python-version: '3.9'
+            - name: Caching
+              uses: actions/cache@v3
+              with:
+                  path: ${{ env.pythonLocation }}
+                  key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements.txt') }}
+            - name: Install dependencies
+              run: |
+                  python -m pip install -e ".[docs]" --no-cache-dir
+            - name: Deploy documentation
+              run: mkdocs gh-deploy --force

@@ -1,45 +1,46 @@
+---
 services:
 
-  backend:
-    container_name: fastapi
+    backend:
+        container_name: fastapi
 
-  frontend:
-    container_name: streamlit
+    frontend:
+        container_name: streamlit
 
-  db:
-    image: postgres:14.2-bullseye
-    container_name: postgre
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    expose:
-      - 5432
-    networks:
-      - db-network
+    db:
+        image: postgres:14.2-bullseye
+        container_name: postgre
+        volumes:
+            - postgres_data:/var/lib/postgresql/data/
+        expose:
+            - 5432
+        networks:
+            - db-network
 
-  db-monitoring:
-    image: dpage/pgadmin4:6.6
-    container_name: pgadmin
-    restart: always
-    networks:
-      - traefik-public
-      - db-network
-    depends_on:
-      - db
+    db-monitoring:
+        image: dpage/pgadmin4:6.6
+        container_name: pgadmin
+        restart: always
+        networks:
+            - traefik-public
+            - db-network
+        depends_on:
+            - db
 
-  uptime-kuma:
-    image: louislam/uptime-kuma
-    container_name: uptime-kuma
-    volumes:
-      - uptime-kuma:/app/data
-    networks:
-      - traefik-public
+    uptime-kuma:
+        image: louislam/uptime-kuma
+        container_name: uptime-kuma
+        volumes:
+            - uptime-kuma:/app/data
+        networks:
+            - traefik-public
 volumes:
-  uptime-kuma:
-  postgres_data:
+    uptime-kuma:
+    postgres_data:
 
 
 networks:
-  backend-frontend:
-  traefik-public:
-    external: true
-  db-network:
+    backend-frontend:
+    traefik-public:
+        external: true
+    db-network:
