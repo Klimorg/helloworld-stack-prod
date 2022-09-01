@@ -3,8 +3,8 @@ name: Build & Deploy
 on: [push]
 
 env:
-    api-name: api-prod
-    ui-name: ui-prod
+    API_NAME: api-prod
+    UI_NAME: ui-prod
 
 jobs:
     tests:
@@ -51,19 +51,19 @@ jobs:
               uses: docker/login-action@v2
               with:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
-                  password: ${{ secrets. DOCKERHUB_ACCESS_TOKEN }}
+                  password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
             - name: Build and push
               uses: docker/build-push-action@v3
               with:
                   file: Dockerfile.backend
                   push: true
-                  tags: vorphus/$api-name:latest,vorphus/$api-name:${{ github.sha }}
+                  tags: vorphus/$API_NAME:latest,vorphus/$API_NAME:${{ github.sha }}
             - name: Build and push
               uses: docker/build-push-action@v3
               with:
                   file: Dockerfile.frontend
                   push: true
-                  tags: vorphus/$ui-name:latest,vorphus/$ui-name:${{ github.sha }}
+                  tags: vorphus/$UI_NAME:latest,vorphus/$UI_NAME:${{ github.sha }}
 
     deploy-stack:
         needs: build-image
