@@ -70,7 +70,7 @@ bind = "0.0.0.0"
 #
 
 # workers = multiprocessing.cpu_count() * 2 + 1
-workers = 5
+workers = 1
 # worker_connections = 1000
 timeout = 90
 # keepalive = 2
