@@ -121,7 +121,8 @@ jobs:
                   export HASHED_PGADMIN_DEFAULT_PASSWORD=${{ secrets.HASHED_PGADMIN_DEFAULT_PASSWORD }}
                   cd /opt/stack_prod
                   make pull-updated-stack
-                  docker compose -f docker-compose.yml -f docker-compose-prod.yml -p stack-prod up --build && exit
+                  make stack-prod-up
+                  exit
                   EOF
 
             - name: Disconnect

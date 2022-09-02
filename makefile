@@ -33,7 +33,7 @@ stack-prod-pull:
 
 .PHONY: stack-prod-up
 stack-prod-up:
-	docker compose -f docker-compose.yml -f docker-compose-prod.yml -p $(prod_prefix) up --build
+	docker compose -f docker-compose.yml -f docker-compose-prod.yml -p $(prod_prefix) up -d --build --remove-orphans
 
 .PHONY: stack-prod-down
 stack-prod-down:
