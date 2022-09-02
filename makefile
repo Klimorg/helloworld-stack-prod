@@ -1,10 +1,15 @@
+network_name = traefik-public
+prod_prefix = stack-prod
+dev_prefix = stack-dev
+
+
 .PHONY: network-up
 network-up:
-	docker network create traefik-public
+	docker network create $(network_name)
 
 .PHONY: network-down
 network-down:
-	docker network rm traefik-public
+	docker network rm $(network_name)
 
 .PHONY: traefik-dev-up
 traefik-dev-up:
@@ -28,23 +33,23 @@ stack-prod-pull:
 
 .PHONY: stack-prod-up
 stack-prod-up:
-	docker compose -f docker-compose.yml -f docker-compose-prod.yml -p stack up --build
+	docker compose -f docker-compose.yml -f docker-compose-prod.yml -p $(prod_prefix) up --build
 
 .PHONY: stack-prod-down
 stack-prod-down:
-	docker compose -f docker-compose.yml -f docker-compose-prod.yml -p stack -v down
+	docker compose -f docker-compose.yml -f docker-compose-prod.yml -p $(prod_prefix) -v down
 
 .PHONY: pull-updated-stack
 pull-updated-stack:
-	cd /opt/stack_prod && docker compose -f docker-compose.yml -f docker-compose-prod.yml pull
+	docker compose -f docker-compose.yml -f docker-compose-prod.yml pull
 
 .PHONY: stack-dev-up
 stack-dev-up:
-	docker compose -f docker-compose.yml -f docker-compose-dev.yml -p stack up --build --remove-orphans
+	docker compose -f docker-compose.yml -f docker-compose-dev.yml -p $(dev_prefix) up --build --remove-orphans
 
 .PHONY: stack-dev-down
 stack-dev-down:
-	docker compose -f docker-compose.yml -f docker-compose-dev.yml -p stack -v down
+	docker compose -f docker-compose.yml -f docker-compose-dev.yml -p $(dev_prefix) -v down
 
 .PHONY: install-dev
 install-dev:
