@@ -1,6 +1,5 @@
 ---
 services:
-
     traefik:
             # Use the latest v2.x.x Traefik image available, check https://hub.docker.com/_/traefik?tab=tags
         image: traefik:v2.6.1
@@ -8,17 +7,19 @@ services:
         ports:
                   # Listen on port 80, default port for HTTP, necessary to redirect to HTTPS
             - 80:80
-                    #port_outside_container:port_inside_container
-                    # Listen on port 443, default for HTTPS
+                  #port_outside_container:port_inside_container
+                  # Listen on port 443, default for HTTPS
             - 443:443
             - 8080:8080
         labels:
                   # Enable Traefik for the traefik dashboard, to make it available in the public network
-            traefik.enable: true       # Define the port inside of the Docker service to use
+            traefik.enable: true
+                  # Define the port inside of the Docker service to use
             traefik.http.services.traefik-dashboard.loadbalancer.server.port: 8080
-                        # HTTP
-                        # Make Traefik use this domain in HTTP
-            traefik.http.routers.traefik-dashboard-http.entrypoints: http       # Use the traefik-public network (declared below)
+                  # HTTP
+                  # Make Traefik use this domain in HTTP
+            traefik.http.routers.traefik-dashboard-http.entrypoints: http
+                  # Use the traefik-public network (declared below)
             traefik.docker.network: traefik-public
         volumes:
                   # Add Docker sock as a mounted volume, so that Traefik can read the labels of the other services
