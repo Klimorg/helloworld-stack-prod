@@ -1,6 +1,12 @@
 # Helloworld stack prod : Sandbox for a pseudo production stack
 
-The idea of this repo is to try, train on new softwares, practice on Docker/k8s, and apply best practices. The final goal is to be the closest possible of what would be a **complete production stack**, meaning that you'll have :
+The idea of this repo is to :
+
+* try, train on new softwares,
+* practice on Docker/k8s,
+* apply best practices.
+
+The final goal is to be the closest possible of what would be a **complete production stack**, meaning that you'll have :
 
 * A REST api with an HTTP server,
 * A monitored SQL database,
@@ -72,6 +78,8 @@ PgAdmin db monitoring :
 
 Here are some sources that might be useful.
 
+
+* [FastAPI Best Practices](https://github.com/zhanymkanov/fastapi-best-practices)
 * [Deploying FastAPI Apps Over HTTPS with Traefik Proxy](https://www.youtube.com/watch?v=7N5O62FjGDc)
 * [An Extremely Simple Docker, Traefik, and Python FastAPI Example](https://kleiber.me/blog/2021/03/23/simple-docker-traefik-python-fastapi-example/)
 * [Dockerizing FastAPI with Postgres, Uvicorn, and Traefik](https://testdriven.io/blog/fastapi-docker-traefik/)
