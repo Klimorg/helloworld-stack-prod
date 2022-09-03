@@ -8,6 +8,7 @@ theme:
     - navigation.instant
     - navigation.tabs
     - navigation.top
+    - navigation.tabs.sticky
   palette:
     - scheme: default
       primary: indigo
@@ -21,25 +22,42 @@ theme:
       toggle:
         icon: material/toggle-switch
         name: Basculer en mode clair
+  font:
+    text: Roboto
+    code: JetBrains Mono Medium
 
 plugins:
   - search:
       lang: fr
-  # - mknotebooks
 
 nav:
   - Accueil: index.md
+  - HTTPS and Reverse proxy: https.md
+  - FastAPI and Gunicorn: api.md
+  - Postgre and pgadmin: db.md
+  - Monitoring: monitoring.md
+  - Authentication: auth.md
 
 markdown_extensions:
-  - admonition
-  - codehilite
-  - pymdownx.inlinehilite
-  - pymdownx.details
-  - pymdownx.superfences
-  - def_list
-  - attr_list
   - pymdownx.highlight:
       linenums: true
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format ""
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - codehilite
+  - pymdownx.details
+  - def_list
+  - attr_list
+  - md_in_html
+  - meta
   - pymdownx.betterem:
       smart_enable: all
   # config pour latex
