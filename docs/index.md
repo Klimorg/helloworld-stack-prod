@@ -1,36 +1,32 @@
-# Welcome Stack_prod : FastAPI stack with Traefik reverse proxy documentation
+# Helloworld stack prod : Sandbox for a pseudo production stack
 
-## Sources :
+The idea of this repo is to try, train on new softwares, practice on Docker/k8s, and apply best practices. The final goal is to be the closest possible of what would be a **complete production stack**, meaning that you'll have :
 
-* [Deploying FastAPI Apps Over HTTPS with Traefik Proxy](https://www.youtube.com/watch?v=7N5O62FjGDc)
-* [An Extremely Simple Docker, Traefik, and Python FastAPI Example](https://kleiber.me/blog/2021/03/23/simple-docker-traefik-python-fastapi-example/)
-* [Dockerizing FastAPI with Postgres, Uvicorn, and Traefik](https://testdriven.io/blog/fastapi-docker-traefik/)
-* [Tiangolo official fastapi docker image](https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker)
-* [How to install Traefik 2.x on a Docker Swarm](https://blog.creekorful.org/2019/10/how-to-install-traefik-2-docker-swarm/)
-* [Deploying FastAPI (and other) apps with HTTPS powered by Traefik](https://github.com/tiangolo/blog-posts/tree/master/deploying-fastapi-apps-with-https-powered-by-traefik)
-* [Deploying a FastAPI app with Docker, Traefik, and Let's Encrypt](https://www.valentinog.com/blog/traefik/)
+* A REST api with an HTTP server,
+* A monitored SQL database,
+* A reverse proxy handling HTTPS,
+* Some api monitoring,
+* An authentication service.
+
+Obviously you should have proper testing and deployment on a VPS via CI/CD.
+
+Right now the four first points are implemented in an early stage. We have selected :
+
+* A Python REST api made with [FastAPI](https://fastapi.tiangolo.com/) and [Gunicorn](https://gunicorn.org/) as an htttp server.
+* [PostgreSQL](https://www.postgresql.org/) as a SQL database and [pgadmin](https://www.pgadmin.org/) to monitor it.
+* [Traefik](https://traefik.io/) as reverse proxy,
+* [Uptime Kuma](https://github.com/louislam/uptime-kuma) as simple uptime monitoring.
+
+## Roadmap
+
+1. Test [Caddy](https://caddyserver.com/v2) as reverse proxy.
+2. Implement IAM with [Fief](https://www.fief.dev/) or [Keycloak](https://www.keycloak.org/) (try both).
+3. [ELK Stack](https://www.elastic.co/fr/what-is/elk-stack) for monitoring, or [Jaeger](https://www.jaegertracing.io/).
+4. Prometheus + Grafana ?
 
 ## Requirements :
-To do https with Traefik, you'll need :
 
-* a Domain Name, check [Name.com](https://www.name.com/) to buy one, the cheapest one can be around 2 euros for a year,
-* and a VPS, you can but one for example on [DigitalOcean](https://cloud.digitalocean.com), for around 5 euros/month.
-
-### Connect your domain name to your VPS
-
-Now that you have a Domain Name, you have to connect it to your VPS. So first you'lle have to record your Domain Name to your VPS, in my case this is explained [here](https://docs.digitalocean.com/products/networking/dns/how-to/add-domains/), you'll need to add this domain to your project and create a [DNS record](https://docs.digitalocean.com/products/networking/dns/how-to/manage-records/). Setting The apex domain (@), and a wildcard (*) to get subdomains will be enough.
-
-Now you have done that you need to change the Name Servers on your Domain Name provider side
-
-
-```shell
-whois mathieuklimczak.com
-ping mathieuklimczak.com
-dig @ns1.digitalocean.com mathieuklimczak.com NS
-```
-
-
-## Steps :
+Whether you work locally in "dev mode", or that this stack is deployed on a VPS, you'll need Docker and docker compose.
 
 ### Docker
 
@@ -42,51 +38,52 @@ dig @ns1.digitalocean.com mathieuklimczak.com NS
 
 * [Install docker-compose on the VPS](https://docs.docker.com/compose/install/)
 
-* `apt install haveged` : add more randomness to the VPS for docker-compose to start. TODO : check this more in detail.
+* You might also need `haveged`, install it via `apt install haveged`. This is supposed to add more randomness to the VPS for docker-compose to start. TODO : [check this more in detail](https://wiki.archlinux.org/title/Haveged).
 
-* On the VPS, make two directories.
+### VPS
 
-```shell
-root@ubuntu-s-1vcpu-2gb-ams3-01:~# mkdir code
-root@ubuntu-s-1vcpu-2gb-ams3-01:~# cd code/
-root@ubuntu-s-1vcpu-2gb-ams3-01:~/code# mkdir tuto_traefik
-root@ubuntu-s-1vcpu-2gb-ams3-01:~/code# cd tuto_traefik/
-root@ubuntu-s-1vcpu-2gb-ams3-01:~/code/tuto_traefik#
-```
-
-* Copy all the files that are in the local project on the vps.
-
-`rsync -a ./* root@mathieuklimczak.com:/root/code/tuto_traefik/`
-
-`rsync -a ./*` *copy everything in this directory*
-
-`rsync -a ./* root@mathieuklimczak.com` *copy everything in this directory, on this vps*
-
-``rsync -a ./* root@mathieuklimczak.com:/root/code/tuto_traefik/`` *copy everything in this directory, on this vps, in the following directory*.
-
-?Question : is `rsync` really copy or synchronization ?
-
-* Once it all has been synced, fire up docker-compose on vps side. Once it has been launched, you can access to the FastAPI doc via `http://mathieuklimczak.com/docs`. Note that right now it's still classical HTTP protocol, not HTTPS. That's what we are going to do now.
-
-* Check the `docker-compose.traefik.yml` file to see the configuration of Traefik, and the `docker-compose.yml` file to see the configuration of the stack
-
-* `docker-compose.override.yml` is used for local development. To check !
+If you want to deploy this stack on a vps, you'll need to rent it, you can rent one for example on [DigitalOcean](https://cloud.digitalocean.com), for around 5 euros/month.
 
 
-## Monitoring Backend with Uptime-Kuma
+!!! info "Remark"
 
-* [Uptime-Kuma Traefik configuration](https://github.com/louislam/uptime-kuma/wiki/Reverse-Proxy#Traefik)
+    If you have an old laptop, why not turn it into you own little [Ubuntu Server](https://dev.to/alejandro_du/your-old-laptop-is-your-new-database-server-4fca) and try deployement on it rtather than a vps ?
+
+
 
 ## Environement variables needed to be set
 
-* Traefik Dashboard :
-  * USERNAME
-  * HASHED_PASSWORD
+Traefik Dashboard :
 
-* PostgreSQl + FastaPI connection to DB :
-  * DB_USERNAME
-  * DB_PASSWORD
+  * `USERNAME`
+  * `HASHED_PASSWORD`
 
-* PgAdmin db monitoring :
-  * PGADMIN_DEFAULT_EMAIL
-  * HASHED_PGADMIN_DEFAULT_EMAIL
+PostgreSQl + FastaPI connection to DB :
+
+  * `DB_USERNAME`
+  * `DB_PASSWORD`
+
+PgAdmin db monitoring :
+
+  * `PGADMIN_DEFAULT_EMAIL`
+  * `HASHED_PGADMIN_DEFAULT_EMAIL`
+
+## Sources
+
+Here are some sources that might be useful.
+
+* [Deploying FastAPI Apps Over HTTPS with Traefik Proxy](https://www.youtube.com/watch?v=7N5O62FjGDc)
+* [An Extremely Simple Docker, Traefik, and Python FastAPI Example](https://kleiber.me/blog/2021/03/23/simple-docker-traefik-python-fastapi-example/)
+* [Dockerizing FastAPI with Postgres, Uvicorn, and Traefik](https://testdriven.io/blog/fastapi-docker-traefik/)
+* [Tiangolo official fastapi docker image](https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker)
+* [How to install Traefik 2.x on a Docker Swarm](https://blog.creekorful.org/2019/10/how-to-install-traefik-2-docker-swarm/)
+* [Deploying FastAPI (and other) apps with HTTPS powered by Traefik](https://github.com/tiangolo/blog-posts/tree/master/deploying-fastapi-apps-with-https-powered-by-traefik)
+* [Deploying a FastAPI app with Docker, Traefik, and Let's Encrypt](https://www.valentinog.com/blog/traefik/)
+
+
+## Control startup and shutdown order in Compose
+
+* https://docs.docker.com/compose/startup-order/
+* https://github.com/jasonsychau/RelayAndContainers
+* https://github.com/vishnubob/wait-for-it
+* https://github.com/Eficode/wait-for
