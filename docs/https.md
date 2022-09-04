@@ -13,17 +13,19 @@ The host having done the request doesn't know where the web app it gets the resu
 ```mermaid
 flowchart TD
     A{{Outside world}}
-    subgraph Internal Network
-        B1[Reverse Proxy]
-        B2[Web app1]
-        B3[Web app2]
-    end
 
     A -->|HTTP request| B1
     B1 -->|Send result| A
 
-    B1 -.- B2
-    B1 -.- B3
+    subgraph Internal Network
+        B1[Reverse Proxy]
+        B2[Web app1]
+        B3[Web app2]
+
+        B1 -.- B2
+        B1 -.- B3
+    end
+
 ```
 
 ### Example

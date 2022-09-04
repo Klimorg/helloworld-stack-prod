@@ -2,37 +2,28 @@
 services:
     traefik:
             # Use the latest v2.x.x Traefik image available, check https://hub.docker.com/_/traefik?tab=tags
-        image: traefik:v2.6.1
+        image: traefik:v2.8.4
         container_name: traefik-reverse-proxy
         ports:
-                  # Listen on port 80, default port for HTTP, necessary to redirect to HTTPS
-            - 80:80
-                  #port_outside_container:port_inside_container
-                  # Listen on port 443, default for HTTPS
-            - 443:443
-            - 8080:8080
+            - 80:80       # Listen on port 80, default port for HTTP, necessary to redirect to HTTPS
+                  # port_outside:port_inside_docker_network
+            - 443:443       # Listen on port 443, default for HTTPS
+            - 8080:8080       # expose 8080 for traefik dashboard
         labels:
-                  # Enable Traefik for the traefik dashboard, to make it available in the public network
-            traefik.enable: true
-                  # Define the port inside of the Docker service to use
-            traefik.http.services.traefik-dashboard.loadbalancer.server.port: 8080
-                  # HTTP
-                  # Make Traefik use this domain in HTTP
-            traefik.http.routers.traefik-dashboard-http.entrypoints: http
-                  # Use the traefik-public network (declared below)
-            traefik.docker.network: traefik-public
+            traefik.enable: true       # Enable Traefik for the traefik dashboard, to make it available in the public network
+            traefik.http.services.traefik-dashboard.loadbalancer.server.port: 8080       # Define the port inside of the Docker service to use
+            traefik.http.routers.traefik-dashboard-http.entrypoints: http       # Make Traefik use this domain in HTTP
+            traefik.docker.network: traefik-public       # Use the traefik-public network (declared below)
         volumes:
-                  # Add Docker sock as a mounted volume, so that Traefik can read the labels of the other services
-            - /var/run/docker.sock:/var/run/docker.sock:ro       # Mount the volume (named volume) to store the certificates
-            - traefik-public-certificates:/certificates
+            - /var/run/docker.sock:/var/run/docker.sock:ro       # Add Docker sock as a mounted volume, so that Traefik can read the labels of the other services
+            - traefik-public-certificates:/certificates       # Mount the volume (named volume) to store the certificates
         command:
-                  # Enable Docker in Traefik, so that it reads labels from Docker services
-            - --providers.docker       # Do not expose all Docker services, only the ones explicitely exposed
-            - --providers.docker.exposedbydefault=false       # Create an entrypoint "http" listening on port 80
-            - --entrypoints.http.address=:80       # Enable the access log, with HTTP requests
-            - --accesslog       # Enable the Traefik log, for configurations and errors
-            - --log       # Enable the dashboard and API
-            - --api
+            - --providers.docker       # Enable Docker in Traefik, so that it reads labels from Docker services
+            - --providers.docker.exposedbydefault=false       # Do not expose all Docker services, only the ones explicitely exposed
+            - --entrypoints.http.address=:80       # Create an entrypoint "http" listening on port 80
+            - --accesslog       # Enable the access log, with HTTP requests
+            - --log       # Enable the Traefik log, for configurations and errors
+            - --api       # Enable the dashboard and API
         networks:
                   # Use the public network created to be shared between Traefik and
                   # any other service that needs to be publicly available with https
@@ -46,7 +37,7 @@ volumes:
 
 
 networks:
-      # Use the previsouly created public network "traefik-public", shared with
-      # other services that needs to be publicly available wia this Traefik
+      # Use the previsouly created network "traefik-public" as an external network,
+      # shared with other services that needs to be publicly available wia this Traefik
     traefik-public:
         external: true

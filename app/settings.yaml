@@ -7,15 +7,3 @@ default:
     POSTGRES_DB: postgres
     DEPLOYMENT_COMMIT: 934115ab89f61a4235f23f664791520edc81f137
     DEPLOYMENT_DATE: '2022-06-01T17:11:58+00:00'
-# development:
-#     name: developer
-#     data_dir: ./data
-#     histograms_dir: ./results/histograms
-#     mean_image_dir: ./results/mean_image
-#     scatterplots_dir: ./results/scatterplots
-# production:
-#     name: admin
-#     data_dir: /opt/data
-#     histograms_dir: /opt/results/histograms
-#     mean_image_dir: /opt/results/mean_image
-#     scatterplots_dir: /opt/results/scatterplots

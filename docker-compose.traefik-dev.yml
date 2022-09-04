@@ -6,16 +6,10 @@ services:
         labels:
             traefik.http.routers.traefik-dashboard-http.rule: Host(`monitor.localhost`)
         command:
-                  # Enable Docker in Traefik, so that it reads labels from Docker services
-            - --providers.docker
-                  # Do not expose all Docker services, only the ones explicitely exposed
-            - --providers.docker.exposedbydefault=false
-                  # Create an entrypoint "http" listening on port 80
-            - --entrypoints.http.address=:80
-                  # Enable the access log, with HTTP requests
-            - --accesslog
-                  # Enable the Traefik log, for configurations and errors
-            - --log
-                  # Enable the dashboard and API
-            - --api.insecure
+            - --providers.docker       # Enable Docker in Traefik, so that it reads labels from Docker services
+            - --providers.docker.exposedbydefault=false       # Do not expose all Docker services, only the ones explicitely exposed
+            - --entrypoints.http.address=:80       # Create an entrypoint "http" listening on port 80
+            - --accesslog       # Enable the access log, with HTTP requests
+            - --log       # Enable the Traefik log, for configurations and errors
+            - --api.insecure       # Enable the dashboard and API
             - --api

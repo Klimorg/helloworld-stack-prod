@@ -22,28 +22,28 @@ services:
         volumes:
             - ./app:/opt/app
         labels:
-      # Enable Traefik for this specific "backend" service
-      # needed because of the `--providers.docker.exposedbydefault=false` command in the
-      # docker-compose.traefik.yml file
+            # Enable Traefik for this specific "backend" service
+            # needed because of the `--providers.docker.exposedbydefault=false` command in the
+            # docker-compose.traefik.yml file
             traefik.enable: true
-      # Define the port inside of the Docker service to use
-      # note thet the name "app" is up to you, the command is `traefik.http.services.{service-name-of-your-choice}.{options-you-want}`
-      # see https://doc.traefik.io/traefik/routing/providers/marathon/#services
+            # Define the port inside of the Docker service to use
+            # note thet the name "app" is up to you, the command is `traefik.http.services.{service-name-of-your-choice}.{options-you-want}`
+            # see https://doc.traefik.io/traefik/routing/providers/marathon/#services
             traefik.http.services.app-dev.loadbalancer.server.port: 8000
-      # HTTP
-      # Make Traefik use this domain in HTTP
-      # traefik.http.routers.{router-name-of-your-choice}.
-      # see https://doc.traefik.io/traefik/routing/providers/marathon/#routers
-      # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
-      # in the docker-compose.traefik.yml file
+            # HTTP
+            # Make Traefik use this domain in HTTP
+            # traefik.http.routers.{router-name-of-your-choice}.
+            # see https://doc.traefik.io/traefik/routing/providers/marathon/#routers
+            # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
+            # in the docker-compose.traefik.yml file
             traefik.http.routers.app-dev-http.entrypoints: http
             traefik.http.routers.app-dev-http.rule: Host(`api.localhost`)
-      #  && PathPrefix(`/test`)
-      # Use the Traefik-public network (declared below)
+            #  && PathPrefix(`/test`)
+            # Use the Traefik-public network (declared below)
             traefik.docker.network: traefik-public
         networks:
-      # Use the public network created to be shared between Traefik and
-      # any other service that needs to be publicly available with http or https
+            # Use the public network created to be shared between Traefik and
+            # any other service that needs to be publicly available with http or https
             - backend-frontend
             - traefik-public
             - db-network
@@ -59,28 +59,28 @@ services:
         volumes:
             - ./frontend:/opt/frontend
         labels:
-      # Enable Traefik for this specific "backend" service
-      # needed because of the `--providers.docker.exposedbydefault=false` command in the
-      # docker-compose.traefik.yml file
+            # Enable Traefik for this specific "backend" service
+            # needed because of the `--providers.docker.exposedbydefault=false` command in the
+            # docker-compose.traefik.yml file
             traefik.enable: true
-      # Define the port inside of the Docker service to use
-      # note thet the name "app" is up to you, the command is `traefik.http.services.{service-name-of-your-choice}.{options-you-want}`
-      # see https://doc.traefik.io/traefik/routing/providers/marathon/#services
+            # Define the port inside of the Docker service to use
+            # note thet the name "app" is up to you, the command is `traefik.http.services.{service-name-of-your-choice}.{options-you-want}`
+            # see https://doc.traefik.io/traefik/routing/providers/marathon/#services
             traefik.http.services.frontend-dev.loadbalancer.server.port: 8501
-      # HTTP
-      # Make Traefik use this domain in HTTP
-      # traefik.http.routers.{router-name-of-your-choice}.
-      # see https://doc.traefik.io/traefik/routing/providers/marathon/#routers
-      # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
-      # in the docker-compose.traefik.yml file
+            # HTTP
+            # Make Traefik use this domain in HTTP
+            # traefik.http.routers.{router-name-of-your-choice}.
+            # see https://doc.traefik.io/traefik/routing/providers/marathon/#routers
+            # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
+            # in the docker-compose.traefik.yml file
             traefik.http.routers.frontend-dev-http.entrypoints: http
             traefik.http.routers.frontend-dev-http.rule: Host(`frontend.localhost`)
-      #  && PathPrefix(`/test`)
-      # Use the Traefik-public network (declared below)
+            #  && PathPrefix(`/test`)
+            # Use the Traefik-public network (declared below)
             traefik.docker.network: traefik-public
         networks:
-      # Use the public network created to be shared between Traefik and
-      # any other service that needs to be publicly available with http or https
+            # Use the public network created to be shared between Traefik and
+            # any other service that needs to be publicly available with http or https
             - backend-frontend
             - traefik-public
         depends_on:
@@ -105,15 +105,15 @@ services:
         labels:
             traefik.enable: true
             traefik.http.services.pgadmin-dev.loadBalancer.server.port: 5050
-      # HTTP
-      # Make Traefik use this domain in HTTP
-      # traefik.http.routers.{router-name-of-your-choice}.
-      # see https://doc.traefik.io/traefik/routing/providers/marathon/#routers
-      # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
-      # in the docker-compose.traefik.yml file
+            # HTTP
+            # Make Traefik use this domain in HTTP
+            # traefik.http.routers.{router-name-of-your-choice}.
+            # see https://doc.traefik.io/traefik/routing/providers/marathon/#routers
+            # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
+            # in the docker-compose.traefik.yml file
             traefik.http.routers.pgadmin-dev-http.entrypoints: http
             traefik.http.routers.pgadmin-dev-http.rule: Host(`pgadmin.localhost`)
-      # Use the Traefik-public network (declared below)
+            # Use the Traefik-public network (declared below)
             traefik.docker.network: traefik-public
 
     uptime-kuma:
@@ -121,27 +121,17 @@ services:
         labels:
             traefik.enable: true
             traefik.http.services.kuma-dev.loadBalancer.server.port: 3001
-      # HTTP
-      # Make Traefik use this domain in HTTP
-      # traefik.http.routers.{router-name-of-your-choice}.
-      # see https://doc.traefik.io/traefik/routing/providers/marathon/#routers
-      # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
-      # in the docker-compose.traefik.yml file
+            # HTTP
+            # Make Traefik use this domain in HTTP
+            # traefik.http.routers.{router-name-of-your-choice}.
+            # see https://doc.traefik.io/traefik/routing/providers/marathon/#routers
+            # The entrypoints corresponds to the one we created `--entrypoints.http.address=:80`
+            # in the docker-compose.traefik.yml file
             traefik.http.routers.kuma-dev-http.entrypoints: http
             traefik.http.routers.kuma-dev-http.rule: Host(`kuma.localhost`)
-      # Use the Traefik-public network (declared below)
+            # Use the Traefik-public network (declared below)
             traefik.docker.network: traefik-public
         volumes:
             - uptime-kuma:/app/data
         networks:
             - traefik-public
-
-# volumes:
-#   uptime-kuma:
-#   postgres_data:
-
-
-# networks:
-#   traefik-public:
-#     external: true
-#   db-network:

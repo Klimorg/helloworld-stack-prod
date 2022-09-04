@@ -47,7 +47,7 @@ async def shutdown() -> None:
     description="démarrage de l'API sur la page de documentation.",
 )
 def main():
-    return RedirectResponse(url="/docs/")
+    return RedirectResponse(url="/docs")
 
 
 @app.get(
