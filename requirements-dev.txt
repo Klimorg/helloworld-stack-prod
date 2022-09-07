@@ -4,7 +4,7 @@ black==22.3.0
 darglint==1.8.1
 flake8==4.0.1
 isort==5.10.1
-mypy==0.960
+mypy==0.971
 # requirements writing
 pipreqs==0.4.11
 # precommit action
