@@ -49,7 +49,8 @@ jobs:
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v2
 
-            - name: Login to DockerHub
+            - if: ${{ github.actor != 'dependabot[bot]' }}
+              name: Login to DockerHub
               uses: docker/login-action@v2
               with:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -60,11 +61,11 @@ jobs:
               uses: docker/build-push-action@v3
               with:
                   file: Dockerfile.backend
-          # push new image only if on main branch
+                  # push new image only if on main branch
                   push: ${{ github.ref == 'refs/heads/main' }}
                   tags: |
-                      vorphus/${{ env.API_NAME }}:latest
-                      vorphus/${{ env.API_NAME }}:${{ github.sha }}
+                      ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.API_NAME }}:latest
+                      ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.API_NAME }}:${{ github.sha }}
 
             - name: Image digest
               run: echo ${{ steps.docker_build_api.outputs.digest }}
@@ -74,18 +75,18 @@ jobs:
               uses: docker/build-push-action@v3
               with:
                   file: Dockerfile.frontend
-          # push new image only if on main branch
+                  # push new image only if on main branch
                   push: ${{ github.ref == 'refs/heads/main' }}
                   tags: |
-                      vorphus/${{ env.UI_NAME }}:latest
-                      vorphus/${{ env.UI_NAME }}:${{ github.sha }}
+                      ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.UI_NAME }}:latest
+                      ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.UI_NAME }}:${{ github.sha }}
 
             - name: Image digest
               run: echo ${{ steps.docker_build_ui.outputs.digest }}
 
     deploy-stack:
         needs: build-image
-    # update stack only if on main branch, not on dev or any other
+        # update stack only if on main branch, not on dev or any other
         if: ${{ github.ref == 'refs/heads/main' }}
         runs-on: ubuntu-latest
         steps:
@@ -128,8 +129,10 @@ jobs:
             - name: Disconnect
               run: echo "ssh connection terminated"
 
-    build-docs:
+    update-docs:
         needs: tests
+        # update stack only if on main branch, not on dev or any other
+        if: ${{ github.actor != 'dependabot[bot]' }}
         runs-on: ubuntu-latest
         steps:
             - name: Checkout repo
@@ -143,3 +146,21 @@ jobs:
                   python -m pip install -e ".[docs]" --no-cache-dir
             - name: Deploy documentation
               run: mkdocs gh-deploy --force
+
+    test-build-docs:
+        needs: tests
+        # update stack only if on main branch, not on dev or any other
+        if: ${{ github.actor == 'dependabot[bot]' }}
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v3
+            - name: Set up Python
+              uses: actions/setup-python@v3
+              with:
+                  python-version: '3.9'
+            - name: Install dependencies
+              run: |
+                  python -m pip install -e ".[docs]" --no-cache-dir
+            - name: Deploy documentation
+              run: mkdocs build

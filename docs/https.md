@@ -111,8 +111,8 @@ Note that https is not a property of reverse proxy, it's an internet communicati
 
 To do https with a reverse proxy, you'll need :
 
-* a Domain Name, check [Name.com](https://www.name.com/) to buy one, the cheapest one can be around 2 euros for a year,
-* and a VPS, you can but one for example on [DigitalOcean](https://cloud.digitalocean.com), for around 5 euros/month. That's the solution I chosed.
+* A Domain Name, check [Name.com](https://www.name.com/) to buy one, the cheapest one can be around 2 euros for a year.
+* A VPS, you can but one for example on [DigitalOcean](https://cloud.digitalocean.com), for around 5 euros/month. That's the solution I have chosen.
 
 !!! quote
 
