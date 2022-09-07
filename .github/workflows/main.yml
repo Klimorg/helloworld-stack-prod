@@ -5,6 +5,8 @@ on: [push, pull_request]
 env:
     API_NAME: api-prod
     UI_NAME: ui-prod
+    DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+    DOCKERHUB_ACCESS_TOKEN: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
 
 jobs:
     tests:
@@ -54,8 +56,8 @@ jobs:
               name: Login to DockerHub
               uses: docker/login-action@v2
               with:
-                  username: ${{ secrets.DOCKERHUB_USERNAME }}
-                  password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+                  username: ${{ env.DOCKERHUB_USERNAME }}
+                  password: ${{ env.DOCKERHUB_ACCESS_TOKEN }}
 
             - name: Build and push
               id: docker_build_api
@@ -65,8 +67,8 @@ jobs:
                   # push new image only if on main branch
                   push: ${{ github.ref == 'refs/heads/main' }}
                   tags: |
-                      ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.API_NAME }}:latest
-                      ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.API_NAME }}:${{ github.sha }}
+                      ${{ env.DOCKERHUB_USERNAME }}/${{ env.API_NAME }}:latest
+                      ${{ env.DOCKERHUB_USERNAME }}/${{ env.API_NAME }}:${{ github.sha }}
 
             - name: Image digest
               run: echo ${{ steps.docker_build_api.outputs.digest }}
@@ -79,8 +81,8 @@ jobs:
                   # push new image only if on main branch
                   push: ${{ github.ref == 'refs/heads/main' }}
                   tags: |
-                      ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.UI_NAME }}:latest
-                      ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.UI_NAME }}:${{ github.sha }}
+                      ${{ env.DOCKERHUB_USERNAME }}/${{ env.UI_NAME }}:latest
+                      ${{ env.DOCKERHUB_USERNAME }}/${{ env.UI_NAME }}:${{ github.sha }}
 
             - name: Image digest
               run: echo ${{ steps.docker_build_ui.outputs.digest }}
