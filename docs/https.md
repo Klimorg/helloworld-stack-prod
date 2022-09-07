@@ -100,6 +100,8 @@ server: uvicorn
 }
 ```
 
+**TODO : write an example of localhost reverse proxy, like `fastapi.localhost`.**
+
 You're all set. You can now deploy it to a VPS/web host and buy a Domain Name to easily access it and enable https.
 
 
@@ -134,6 +136,7 @@ Now you have done that you also might need to change the Name Servers on your Do
 
 The update of worldwide DNS servers might take some time, but once it is done, you'll be able to ping your VPS using your domain name.
 
+You can use for example one of the following command, they do not do the same thing, but a response from one of them is a sign that the connection between tour domain name and your vps has succedded.
 
 ```shell
 whois mathieuklimczak.com
@@ -143,6 +146,18 @@ dig @ns1.digitalocean.com mathieuklimczak.com NS
 
 
 ## Traefik
+
+[Traefik](https://doc.traefik.io/traefik/) is an open-source Edge Router that makes publishing your services a fun and easy experience. It receives requests on behalf of your system and finds out which components are responsible for handling them.
+
+Traefik is natively compliant with every major cluster technology, such as Kubernetes, Docker, Docker Swarm, AWS, Mesos, Marathon, etc; and can handle many at the same time.
+
+Dynamic configuration is one of the major benefits of a container-aware proxy like Traefik. You don’t need to start your upstream apps before you run Traefik because it watches for new containers while it’s running. You don’t have to restart Traefik or reload configuration to make a change to your application setup—that’s all part of your application deployment. Traefik has its own API and web UI that shows the rules, so you can run Traefik without any other containers and then deploy an application and see how the config gets built.
+
+To do that, Traefik check the labels you put in the other containers of your stack to handle their connection to the virtual network created by the reverse proxy.
+
+## Traefik configuration
+
+To be able to have one configuration for each environment (dev, prod), we'll use the overriding and composition properties of docker-compose. That way, we have a base configuration which we can extend and override with the development or production configuration.
 
 ### Traefik base configuration
 
