@@ -1,7 +1,7 @@
 arrow==1.2.2
 asyncpg==0.26.0
 # sqlmodel==0.0.6
-dynaconf==3.1.8
+dynaconf==3.1.9
 fastapi==0.79.0
 gunicorn==20.1.0
 loguru==0.6.0
