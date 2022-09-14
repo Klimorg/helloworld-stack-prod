@@ -118,7 +118,7 @@ To do https with a reverse proxy, you'll need :
 
 !!! quote
 
-    Domain names and web hosting are two different services. However, they work together to make websites possible.
+    **Domain names and web hosting are two different services**. However, they work together to make websites possible.
 
     Basically a domain name system is like a massive address book that is constantly updated. Behind each domain name, there is an address of the web hosting service storing the website’s files.
 
@@ -161,11 +161,22 @@ To be able to have one configuration for each environment (dev, prod), we'll use
 
 ### Traefik base configuration
 
+The base configuration is used for :
+
+* Defining the container,
+* Defining the porst we will use : `80` for http, `443` for https, and `8080` for the Traefik Dashboard.
+
+We also tell Traefik that we will use Docker, so that the addresses it will have to redirect will comme from docker containers.
+
+The network we will use will be the network called `traefik-public`, and it will be an external one, so that other containers like our backend, frontend, will be able to connect to it.
+
 ```yaml
 --8<-- "docker-compose.traefik.yml"
 ```
 
 ### Traefik dev configuration
+
+The configuration in development mode adds the address of the traefik dashboard : `monitor.localhost`.
 
 ```yaml
 --8<-- "docker-compose.traefik-dev.yml"
@@ -173,8 +184,10 @@ To be able to have one configuration for each environment (dev, prod), we'll use
 
 ### Traefik prod configuration
 
+The configuration in development mode enables https.
+
 ```yaml
 --8<-- "docker-compose.traefik-prod.yml"
 ```
 
-## Keycloak
+## Caddy2

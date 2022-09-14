@@ -4,12 +4,16 @@ services:
     traefik:
         restart: unless-stopped
         labels:
+            # yamllint disable-line rule:line-length
             traefik.http.routers.traefik-dashboard-http.rule: Host(`monitor.localhost`)
         command:
-            - --providers.docker # Enable Docker in Traefik, so that it reads labels from Docker services
-            - --providers.docker.exposedbydefault=false # Do not expose all Docker services, only the ones explicitely exposed
-            - --entrypoints.http.address=:80 # Create an entrypoint "http" listening on port 80
-            - --accesslog # Enable the access log, with HTTP requests
-            - --log # Enable the Traefik log, for configurations and errors
-            - --api.insecure # Enable the dashboard and API
+            # yamllint disable-line rule:line-length
+            - --providers.docker  # Enable Docker in Traefik, so that it reads labels from Docker services
+            # yamllint disable-line rule:line-length
+            - --providers.docker.exposedbydefault=false  # Do not expose all Docker services, only the ones explicitely exposed
+            # yamllint disable-line rule:line-length
+            - --entrypoints.http.address=:80  # Create an entrypoint "http" listening on port 80
+            - --accesslog  # Enable the access log, with HTTP requests
+            - --log  # Enable the Traefik log, for configurations and errors
+            - --api.insecure  # Enable the dashboard and API
             - --api

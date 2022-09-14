@@ -1,43 +1,58 @@
 ---
 services:
     traefik:
+        # yamllint disable-line rule:line-length
         # Use the latest v2.x.x Traefik image available, check https://hub.docker.com/_/traefik?tab=tags
         image: traefik:v2.8.4
         container_name: traefik-reverse-proxy
         ports:
-            - 80:80 # Listen on port 80, default port for HTTP, necessary to redirect to HTTPS
+            # yamllint disable-line rule:line-length
+            - 80:80  # Listen on port 80, default port for HTTP, necessary to redirect to HTTPS
             # port_outside:port_inside_docker_network
-            - 443:443 # Listen on port 443, default for HTTPS
-            - 8080:8080 # expose 8080 for traefik dashboard
+            - 443:443  # Listen on port 443, default for HTTPS
+            - 8080:8080  # expose 8080 for traefik dashboard
         labels:
-            traefik.enable: true # Enable Traefik for the traefik dashboard, to make it available in the public network
-            traefik.http.services.traefik-dashboard.loadbalancer.server.port: 8080 # Define the port inside of the Docker service to use
-            traefik.http.routers.traefik-dashboard-http.entrypoints: http # Make Traefik use this domain in HTTP
-            traefik.docker.network: traefik-public # Use the traefik-public network (declared below)
+            # yamllint disable-line rule:line-length
+            traefik.enable: true  # Enable Traefik for the traefik dashboard, to make it available in the public network
+            # yamllint disable-line rule:line-length
+            traefik.http.services.traefik-dashboard.loadbalancer.server.port: 8080  # Define the port inside of the Docker service to use
+            # yamllint disable-line rule:line-length
+            traefik.http.routers.traefik-dashboard-http.entrypoints: http  # Make Traefik use this domain in HTTP
+            # yamllint disable-line rule:line-length
+            traefik.docker.network: traefik-public  # Use the traefik-public network (declared below)
         volumes:
-            - /var/run/docker.sock:/var/run/docker.sock:ro # Add Docker sock as a mounted volume, so that Traefik can read the labels of the other services
-            - traefik-public-certificates:/certificates # Mount the volume (named volume) to store the certificates
+            # yamllint disable-line rule:line-length
+            - /var/run/docker.sock:/var/run/docker.sock:ro  # Add Docker sock as a mounted volume, so that Traefik can read the labels of the other services
+            # yamllint disable-line rule:line-length
+            - traefik-public-certificates:/certificates  # Mount the volume (named volume) to store the certificates
         command:
-            - --providers.docker # Enable Docker in Traefik, so that it reads labels from Docker services
-            - --providers.docker.exposedbydefault=false # Do not expose all Docker services, only the ones explicitely exposed
-            - --entrypoints.http.address=:80 # Create an entrypoint "http" listening on port 80
-            - --accesslog # Enable the access log, with HTTP requests
-            - --log # Enable the Traefik log, for configurations and errors
-            - --api # Enable the dashboard and API
+            # yamllint disable-line rule:line-length
+            - --providers.docker  # Enable Docker in Traefik, so that it reads labels from Docker services
+            # yamllint disable-line rule:line-length
+            - --providers.docker.exposedbydefault=false  # Do not expose all Docker services, only the ones explicitely exposed
+            # yamllint disable-line rule:line-length
+            - --entrypoints.http.address=:80  # Create an entrypoint "http" listening on port 80
+            - --accesslog  # Enable the access log, with HTTP requests
+            - --log  # Enable the Traefik log, for configurations and errors
+            - --api  # Enable the dashboard and API
         networks:
             # Use the public network created to be shared between Traefik and
             # any other service that needs to be publicly available with https
             - traefik-public
 
 volumes:
+    # yamllint disable-line rule:line-length
     # Create a volume to store the certificates, there is a constraint to make sure
+    # yamllint disable-line rule:line-length
     # Traefik is always deployed to the same Docker node with the same volume containing
     # the HTTPS vertificates
     traefik-public-certificates:
 
 
 networks:
+    # yamllint disable-line rule:line-length
     # Use the previsouly created network "traefik-public" as an external network,
+    # yamllint disable-line rule:line-length
     # shared with other services that needs to be publicly available wia this Traefik
     traefik-public:
         external: true

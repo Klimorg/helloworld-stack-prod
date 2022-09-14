@@ -7,7 +7,7 @@ env:
     UI_NAME: ui-prod
 
 jobs:
-    tests:
+    tests-backend:
         runs-on: ${{ matrix.os }}
         strategy:
             fail-fast: false
@@ -32,6 +32,36 @@ jobs:
               run: |
                   python -m pip install --upgrade pip
                   python -m pip install -r app/requirements.txt
+                  python -m pip install -r requirements-test.txt
+
+            - name: Run test suite
+              run: |
+                  python -m pytest -v
+
+    tests-frontend:
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, macos-latest]
+                python-version: ['3.8', '3.9', '3.10']
+                exclude:
+                    - os: macos-latest
+                      python-version: '3.8'
+
+        steps:
+            - uses: actions/checkout@v3
+            - name: Set up Python
+              uses: actions/setup-python@v3
+              with:
+                  python-version: ${{ matrix.python-version }}
+
+            - name: Display Python version
+              run: python --version
+
+            - name: Install Python dependencies
+              run: |
+                  python -m pip install --upgrade pip
                   python -m pip install -r frontend/requirements.txt
                   python -m pip install -r requirements-test.txt
 
@@ -40,7 +70,7 @@ jobs:
                   python -m pytest -v
 
     build-image:
-        needs: tests
+        needs: [tests-backend, tests-frontend]
         runs-on: ubuntu-latest
         steps:
             - name: Set up QEMU
@@ -130,7 +160,7 @@ jobs:
               run: echo "ssh connection terminated"
 
     update-docs:
-        needs: tests
+        needs: [tests-backend, tests-frontend]
         # update stack only if on main branch, not on dev or any other
         if: ${{ github.actor != 'dependabot[bot]' }}
         runs-on: ubuntu-latest
@@ -148,7 +178,7 @@ jobs:
               run: mkdocs gh-deploy --force
 
     test-build-docs:
-        needs: tests
+        needs: [tests-backend, tests-frontend]
         # update stack only if on main branch, not on dev or any other
         if: ${{ github.actor == 'dependabot[bot]' }}
         runs-on: ubuntu-latest
