@@ -67,7 +67,7 @@ jobs:
 
             - name: Run test suite
               run: |
-                  python -m pytest -v
+                  echo "pas de tests frontend pour l'instant"
 
     build-image:
         needs: [tests-backend, tests-frontend]
@@ -121,6 +121,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Configure SSH
+            # https://blog.benoitblanchon.fr/github-action-run-ssh-commands/
               run: |
                   mkdir -p ~/.ssh/
                   echo "$SSH_KEY" > ~/.ssh/deploy

@@ -33,6 +33,7 @@ plugins:
 
 nav:
   - Accueil: index.md
+  - CI-CD: deploy.md
   - HTTPS and Reverse proxy: https.md
   - FastAPI and Gunicorn: api.md
   - Postgre and pgadmin: db.md

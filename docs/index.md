@@ -26,9 +26,10 @@ Right now the four first points are implemented in an early stage. We have selec
 ## Roadmap
 
 1. Test [Caddy](https://caddyserver.com/v2) as reverse proxy.
-2. Implement IAM with [Fief](https://www.fief.dev/) or [Keycloak](https://www.keycloak.org/) (try both).
-3. [ELK Stack](https://www.elastic.co/fr/what-is/elk-stack) for monitoring, or [Jaeger](https://www.jaegertracing.io/).
-4. Prometheus + Grafana ?
+2. Rework of the api backend and use the Web-Queue-Worker architecture.
+3. Implement IAM with [Fief](https://www.fief.dev/) or [Keycloak](https://www.keycloak.org/) (try both).
+4. [ELK Stack](https://www.elastic.co/fr/what-is/elk-stack) for monitoring, or [Jaeger](https://www.jaegertracing.io/).
+5. Prometheus + Grafana ?
 
 ## Requirements :
 

@@ -1,0 +1,73 @@
+---
+x-db-env: &db-env
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+    POSTGRES_DB: postgres
+
+x-db-monitoring-env: &db-monitoring-env
+    PGADMIN_DEFAULT_EMAIL: klimczak.mathieu@pm.me
+    PGADMIN_DEFAULT_PASSWORD: 1988
+    PGADMIN_LISTEN_PORT: 5050
+
+services:
+
+    backend:
+        build:
+            context: .
+            dockerfile: Dockerfile.backend
+        command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0
+        environment:
+            DEPLOYMENT_COMMIT: toto
+        restart: unless-stopped
+        volumes:
+            - ./app:/opt/app
+        networks:
+            # Use the public network created to be shared between Traefik and
+            # yamllint disable-line rule:line-length
+            # any other service that needs to be publicly available with http or https
+            - backend-frontend
+            - caddy-proxy-network
+            - db-network
+        depends_on:
+            - db
+
+    frontend:
+        build:
+            context: .
+            dockerfile: Dockerfile.frontend
+        command: streamlit run frontend/main_page.py
+        restart: unless-stopped
+        volumes:
+            - ./frontend:/opt/frontend
+        networks:
+            # Use the public network created to be shared between Traefik and
+            # yamllint disable-line rule:line-length
+            # any other service that needs to be publicly available with http or https
+            - backend-frontend
+            - caddy-proxy-network
+        depends_on:
+            - backend
+
+    db:
+        restart: unless-stopped
+        environment:
+            <<: *db-env
+
+    db-monitoring:
+        image: dpage/pgadmin4:6.6
+        container_name: pgadmin
+        restart: unless-stopped
+        networks:
+            - caddy-proxy-network
+            - db-network
+        depends_on:
+            - db
+        environment:
+            <<: *db-monitoring-env
+
+    uptime-kuma:
+        restart: unless-stopped
+        volumes:
+            - uptime-kuma:/app/data
+        networks:
+            - caddy-proxy-network

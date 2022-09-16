@@ -1,0 +1,15 @@
+api.{$DOMAIN_NAME} {
+	reverse_proxy backend:8000
+}
+
+frontend.{$DOMAIN_NAME} {
+	reverse_proxy back:8501
+}
+
+pgadmin.{$DOMAIN_NAME} {
+    reverse_proxy db-monitoring:5050
+}
+
+kuma.{$DOMAIN_NAME} {
+    reverse_proxy uptime-kuma:3001
+}

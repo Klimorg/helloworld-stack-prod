@@ -1,0 +1,5 @@
+---
+services:
+    reverse-proxy:
+        environment:
+            DOMAIN_NAME: mklimczak.org

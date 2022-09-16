@@ -1,0 +1,22 @@
+---
+services:
+    reverse-proxy:
+        image: caddy:latest
+        container_name: reverse_proxy
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - ./Caddyfile:/etc/caddy/Caddyfile:ro
+            - reverse_proxy_data:/data
+            - reverse_proxy_config:/config
+        networks:
+            - caddy-proxy-network
+
+volumes:
+    reverse_proxy_data:
+    reverse_proxy_config:
+
+networks:
+    caddy-proxy-network:
+        external: true
