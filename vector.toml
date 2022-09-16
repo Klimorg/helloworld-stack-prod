@@ -1,0 +1,11 @@
+[sources.in]
+  type = "docker" # required
+
+[sinks.out]
+  # General
+  type = "file" # required
+  inputs = ["in"] # required
+  path = "vector-%Y-%m-%d.log" # required
+
+  # Encoding
+  encoding.codec = "json" # required

@@ -71,3 +71,14 @@ services:
             - uptime-kuma:/app/data
         networks:
             - caddy-proxy-network
+
+
+    logrouter:
+        image: timberio/vector:latest-alpine
+        container_name: logrouter
+        restart: unless-stopped
+        volumes:
+            - ./vector.toml:/etc/vector/vector.toml:ro
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+        networks:
+            - caddy-proxy-network
