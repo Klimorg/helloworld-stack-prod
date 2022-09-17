@@ -1,11 +1,14 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.158.0/containers/docker-existing-dockerfile
 {
-  "name": "AI-stack-prod",
+  "name": "helloworld-stack-prod",
   // Sets the run context to one level up instead of the .devcontainer folder.
   "context": "..",
   // Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
-  "dockerFile": "../Dockerfile",
+  "dockerFile": "../Dockerfile.backend",
+  // The order of the files is important since later files override previous ones
+  // "dockerComposeFile": ["../docker-compose.yml", "../docker-compose-dev.yml"],
+  // "service": "backend",
   // Set *default* container specific settings.json values on container create.
   "settings": {
     "editor.rulers": [88, 120],
@@ -53,7 +56,7 @@
   "runArgs": ["-it", "--rm", "-P"],
   // Uncomment to use the Docker CLI from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
   "mounts": [
-    "type=bind,source=${localWorkspaceFolder},target=${localEnv:HOME}${localEnv:USERPROFILE}/stack-prod"
+    "type=bind,source=${localWorkspaceFolder},target=${localEnv:HOME}${localEnv:USERPROFILE}/stack-prod",
   ]
   // Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
   //"remoteUser": "vorph"

@@ -46,6 +46,11 @@ Whether you work locally in "dev mode", or that this stack is deployed on a VPS,
 
 * You might also need `haveged`, install it via `apt install haveged`. This is supposed to add more randomness to the VPS for docker-compose to start. TODO : [check this more in detail](https://wiki.archlinux.org/title/Haveged).
 
+
+### Domain Name
+
+To enable https, you'll need a domain name. You van buy one on [Name.com](https://www.name.com/).
+
 ### VPS
 
 If you want to deploy this stack on a vps, you'll need to rent it, you can rent one for example on [DigitalOcean](https://cloud.digitalocean.com), for around 5 euros/month.
