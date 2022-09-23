@@ -24,7 +24,7 @@ sequenceDiagram
     Note over Github: ssh connection <br/> to VPS
 
     activate Github
-    Github->>VPS: pvt-key
+    Github->>VPS: private key
     deactivate Github
 
     loop Decrypting

@@ -1,16 +1,26 @@
-network_name = traefik-public
+traefik_network_name = caddy-proxy-network
+caddy_network_name = caddy-proxy-network
 prod_prefix = stack-prod
 dev_prefix = stack-dev
 
 #### Networks ####
 
-.PHONY: network-up
-network-up:
-	docker network create $(network_name)
+.PHONY: traefik-network-up
+traefik-network-up:
+	docker network create $(traefik_network_name)
 
-.PHONY: network-down
-network-down:
-	docker network rm $(network_name)
+.PHONY: traefik-network-down
+traefik-network-down:
+	docker network rm $(traefik_network_name)
+
+.PHONY: caddy-network-up
+caddy-network-up:
+	docker network create $(caddy_network_name)
+
+.PHONY: caddy-network-down
+caddy-network-down:
+	docker network rm $(caddy_network_name)
+
 
 #### Reverse Proxies ####
 #### Traefik ####

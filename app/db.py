@@ -19,8 +19,13 @@ async_db_uri: str = PostgresDsn.build(
 )
 
 
-database = databases.Database(async_db_uri)
+engine = create_async_engine(async_db_uri, future=True, echo=False)
 metadata = sqlalchemy.MetaData()
+database = databases.Database(async_db_uri)
+
+# metadata = sqlalchemy.MetaData()
+# database = databases.Database("sqlite:///test.db")
+# engine = create_engine(database, echo=True)
 
 
 # You need to subclass your MainMeta class in each Model class as those classes store
@@ -49,7 +54,6 @@ class Healthcheck(Model):
     status: str = String(max_length=5)
 
 
-engine = create_async_engine(async_db_uri, future=True, echo=False)
 async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 

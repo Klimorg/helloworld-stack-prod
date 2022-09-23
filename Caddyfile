@@ -1,4 +1,4 @@
-api.{$DOMAIN_NAME} {
+backend.{$DOMAIN_NAME} {
 	reverse_proxy backend:8000
 }
 

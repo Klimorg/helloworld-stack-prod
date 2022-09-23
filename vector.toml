@@ -1,5 +1,5 @@
 [sources.in]
-  type = "docker" # required
+  type = "docker_logs" # required
 
 [sinks.out]
   # General
