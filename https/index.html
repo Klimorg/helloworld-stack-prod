@@ -1,0 +1,1146 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="Mathieu Klimczak">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.4.3">
+    
+    
+      
+        <title>HTTPS and Reverse proxy - Production Stack Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.6b80c2a2.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.cbb835fc.min.css">
+        
+      
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CJetBrains+Mono+Medium:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"JetBrains Mono Medium"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#reverse-proxy-and-https" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href=".." title="Production Stack Documentation" class="md-header__button md-logo" aria-label="Production Stack Documentation" data-md-component="logo">
+      
+  <img src="../images/noun_Robot_1955251.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Production Stack Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              HTTPS and Reverse proxy
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Basculer en mode sombre"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Basculer en mode sombre" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="deep-orange"  aria-label="Basculer en mode clair"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Basculer en mode clair" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Effacer" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href=".." class="md-tabs__link">
+      Accueil
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../deploy/" class="md-tabs__link">
+      CI-CD
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  <li class="md-tabs__item">
+    <a href="./" class="md-tabs__link md-tabs__link--active">
+      HTTPS and Reverse proxy
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../api/" class="md-tabs__link">
+      FastAPI and Gunicorn
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../db/" class="md-tabs__link">
+      Postgre and pgadmin
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../monitoring/" class="md-tabs__link">
+      Monitoring
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../auth/" class="md-tabs__link">
+      Authentication
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Production Stack Documentation" class="md-nav__button md-logo" aria-label="Production Stack Documentation" data-md-component="logo">
+      
+  <img src="../images/noun_Robot_1955251.svg" alt="logo">
+
+    </a>
+    Production Stack Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Accueil
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy/" class="md-nav__link">
+        CI-CD
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          HTTPS and Reverse proxy
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        HTTPS and Reverse proxy
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-does-a-reverse-proxy-work" class="md-nav__link">
+    How does a reverse proxy work
+  </a>
+  
+    <nav class="md-nav" aria-label="How does a reverse proxy work">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#https" class="md-nav__link">
+    HTTPS
+  </a>
+  
+    <nav class="md-nav" aria-label="HTTPS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connect-your-domain-name-to-your-vps" class="md-nav__link">
+    Connect your domain name to your VPS
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#traefik" class="md-nav__link">
+    Traefik
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#traefik-configuration" class="md-nav__link">
+    Traefik configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Traefik configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#traefik-base-configuration" class="md-nav__link">
+    Traefik base configuration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#traefik-dev-configuration" class="md-nav__link">
+    Traefik dev configuration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#traefik-prod-configuration" class="md-nav__link">
+    Traefik prod configuration
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#caddy2" class="md-nav__link">
+    Caddy2
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        FastAPI and Gunicorn
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../db/" class="md-nav__link">
+        Postgre and pgadmin
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitoring/" class="md-nav__link">
+        Monitoring
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../auth/" class="md-nav__link">
+        Authentication
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-does-a-reverse-proxy-work" class="md-nav__link">
+    How does a reverse proxy work
+  </a>
+  
+    <nav class="md-nav" aria-label="How does a reverse proxy work">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#https" class="md-nav__link">
+    HTTPS
+  </a>
+  
+    <nav class="md-nav" aria-label="HTTPS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connect-your-domain-name-to-your-vps" class="md-nav__link">
+    Connect your domain name to your VPS
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#traefik" class="md-nav__link">
+    Traefik
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#traefik-configuration" class="md-nav__link">
+    Traefik configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Traefik configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#traefik-base-configuration" class="md-nav__link">
+    Traefik base configuration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#traefik-dev-configuration" class="md-nav__link">
+    Traefik dev configuration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#traefik-prod-configuration" class="md-nav__link">
+    Traefik prod configuration
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#caddy2" class="md-nav__link">
+    Caddy2
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+
+<h1 id="reverse-proxy-and-https">Reverse proxy and https</h1>
+<h2 id="how-does-a-reverse-proxy-work">How does a reverse proxy work</h2>
+<p>A reverse proxy works as the gateway to several web applications; all traffic goes to the reverse proxy, and it decides which app to get the content from. It can cache responses and mutate them before sending them back to the client.</p>
+<p>Thus it creates a layer between web applications and the outside world. Speaking in terms of containers, <strong>a reverse proxy is the only container with published ports</strong> : it receives all incoming requests and fetches the responses from other containers. That means all your application containers become internal components, which can make it easier to scale, update, and secure them.</p>
+<p>The reverse proxy catches the http request, then fetches the result from the corresponding web app and sends it back.</p>
+<p>The host which made the request doesn't know where the web app it gets the result from is located, <strong>its only interaction is with the reverse proxy</strong>.</p>
+<pre class="mermaid"><code>flowchart TD
+    A{{Outside world}}
+
+    A --&gt;|HTTP request| B1
+    B1 --&gt;|Send result| A
+
+    subgraph Internal Network
+        B1[Reverse Proxy]
+        B2[Web app1]
+        B3[Web app2]
+
+        B1 -.- B2
+        B1 -.- B3
+    end
+</code></pre>
+<h3 id="example">Example</h3>
+<p>Suppose you have developed your api using FastAPI (<a href="https://github.com/Klimorg/helloworld-api">this one</a> for example), then you can test it locally by running the following (or similar) command.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>uvicorn app.main:app --reload --workers <span class="m">1</span> --host <span class="m">0</span>.0.0.0 --port <span class="m">8000</span>
+</code></pre></div></td></tr></table></div>
+<p>and then you should get the following response on the terminal.</p>
+<p><div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>INFO:     Started server process [1]
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a>INFO:     Waiting for application startup.
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a>INFO:     Application startup complete.
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a>INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+</code></pre></div></td></tr></table></div>
+Meaning that your api will run locally on the following address <code>http://0.0.0.0:8000</code>. You can even query it with tools like <code>httpie</code> or <code>curl</code>.</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">Querying with httpie</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-2-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-2-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-2-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-2-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-2-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-2-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-2-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-2-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-2-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a>❯ http 0.0.0.0:8000/hello/
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a>HTTP/1.1 200 OK
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a>content-length: 17
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a>content-type: application/json
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a>date: Sat, 03 Sep 2022 20:16:07 GMT
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a>server: uvicorn
+<a id="__codelineno-2-7" name="__codelineno-2-7"></a>
+<a id="__codelineno-2-8" name="__codelineno-2-8"></a>{
+<a id="__codelineno-2-9" name="__codelineno-2-9"></a>    &quot;Hello&quot;: &quot;World&quot;
+<a id="__codelineno-2-10" name="__codelineno-2-10"></a>}
+</code></pre></div></td></tr></table></div>
+<p>Now that you've tested your api, you want to deploy it. Like everybody, you turn it into a docker image so that you can deploy it anywhere (well, at least on any Linux host).</p>
+<p>Let's say that your api is registered under <a href="https://hub.docker.com/repository/docker/vorphus/helloworld-api"><code>vorphus/helloworld-api:1.0-slim</code></a> on dockerhub.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a>docker pull vorphus/helloworld-api:1.0-slim
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a>docker run --rm vorphus/helloworld-api:1.0-slim
+</code></pre></div></td></tr></table></div>
+<p>You should get the same response than before on the terminal.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
+<span class="normal"><a href="#__codelineno-5-2">2</a></span>
+<span class="normal"><a href="#__codelineno-5-3">3</a></span>
+<span class="normal"><a href="#__codelineno-5-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a>INFO:     Started server process [1]
+<a id="__codelineno-5-2" name="__codelineno-5-2"></a>INFO:     Waiting for application startup.
+<a id="__codelineno-5-3" name="__codelineno-5-3"></a>INFO:     Application startup complete.
+<a id="__codelineno-5-4" name="__codelineno-5-4"></a>INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+</code></pre></div></td></tr></table></div>
+<p>But remember that <strong>the port described here is internal to your docker network</strong>, thus you have to forward it.</p>
+<p><div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a>docker run --rm -p 8000:8000 vorphus/helloworld-api:1.0-slim
+</code></pre></div></td></tr></table></div>
+And now everything works.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-7-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-7-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-7-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-7-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-7-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-7-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-7-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-7-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-7-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a>❯ http 0.0.0.0:8000/hello/
+<a id="__codelineno-7-2" name="__codelineno-7-2"></a>HTTP/1.1 200 OK
+<a id="__codelineno-7-3" name="__codelineno-7-3"></a>content-length: 17
+<a id="__codelineno-7-4" name="__codelineno-7-4"></a>content-type: application/json
+<a id="__codelineno-7-5" name="__codelineno-7-5"></a>date: Sat, 03 Sep 2022 20:16:07 GMT
+<a id="__codelineno-7-6" name="__codelineno-7-6"></a>server: uvicorn
+<a id="__codelineno-7-7" name="__codelineno-7-7"></a>
+<a id="__codelineno-7-8" name="__codelineno-7-8"></a>{
+<a id="__codelineno-7-9" name="__codelineno-7-9"></a>    &quot;Hello&quot;: &quot;World&quot;
+<a id="__codelineno-7-10" name="__codelineno-7-10"></a>}
+</code></pre></div></td></tr></table></div>
+<p><strong>TODO : write an example of localhost reverse proxy, like <code>fastapi.localhost</code>.</strong></p>
+<p>You're all set. You can now deploy it to a VPS/web host and buy a Domain Name to easily access it and enable https.</p>
+<h2 id="https">HTTPS</h2>
+<p>Note that https is not a property of reverse proxy, it's an internet communication protocol that protects the integrity and confidentiality of data between the user's computer and the site, but modern reverse proxies allow for an easy implementation of https.</p>
+<ul>
+<li><a href="https://developers.google.com/search/docs/advanced/security/https">Secure your site with HTTPS</a></li>
+</ul>
+<p>To do https with a reverse proxy, you'll need :</p>
+<ul>
+<li>A Domain Name, check <a href="https://www.name.com/">Name.com</a> to buy one, the cheapest one can be around 2 euros for a year.</li>
+<li>A VPS, you can but one for example on <a href="https://cloud.digitalocean.com">DigitalOcean</a>, for around 5 euros/month. That's the solution I have chosen.</li>
+</ul>
+<div class="admonition quote">
+<p class="admonition-title">Quote</p>
+<p><strong>Domain names and web hosting are two different services</strong>. However, they work together to make websites possible.</p>
+<p>Basically a domain name system is like a massive address book that is constantly updated. Behind each domain name, there is an address of the web hosting service storing the website’s files.</p>
+<p>Without domain names, it will not be possible for people to find your website and without web hosting you cannot build a website.</p>
+<p><a href="https://www.wpbeginner.com/beginners-guide/whats-the-difference-between-domain-name-and-web-hosting-explained/">What’s the Difference Between Domain Name and Web Hosting (Explained)</a></p>
+</div>
+<h3 id="connect-your-domain-name-to-your-vps">Connect your domain name to your VPS</h3>
+<p>Now that you have a Domain Name, you have to connect it to your VPS. So first you'lle have to record your Domain Name to your VPS, in my case this is explained <a href="https://docs.digitalocean.com/products/networking/dns/how-to/add-domains/">here</a>.</p>
+<p>You'll need to add this domain to your project and create a <a href="https://docs.digitalocean.com/products/networking/dns/how-to/manage-records/">DNS record</a>. Setting The apex domain <code>@</code>, and a wildcard <code>*</code> to get subdomains will be enough.</p>
+<p>Now you have done that you also might need to change the Name Servers on your Domain Name provider side.</p>
+<p>The update of worldwide DNS servers might take some time, but once it is done, you'll be able to ping your VPS using your domain name.</p>
+<p>You can use for example one of the following command, they do not do the same thing, but a response from one of them is a sign that the connection between tour domain name and your vps has succedded.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span>
+<span class="normal"><a href="#__codelineno-8-2">2</a></span>
+<span class="normal"><a href="#__codelineno-8-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a>whois mathieuklimczak.com
+<a id="__codelineno-8-2" name="__codelineno-8-2"></a>ping mathieuklimczak.com
+<a id="__codelineno-8-3" name="__codelineno-8-3"></a>dig @ns1.digitalocean.com mathieuklimczak.com NS
+</code></pre></div></td></tr></table></div>
+<h2 id="traefik">Traefik</h2>
+<p><a href="https://doc.traefik.io/traefik/">Traefik</a> is an open-source Edge Router that makes publishing your services a fun and easy experience. It receives requests on behalf of your system and finds out which components are responsible for handling them.</p>
+<p>Traefik is natively compliant with every major cluster technology, such as Kubernetes, Docker, Docker Swarm, AWS, Mesos, Marathon, etc; and can handle many at the same time.</p>
+<p>Dynamic configuration is one of the major benefits of a container-aware proxy like Traefik. You don’t need to start your upstream apps before you run Traefik because it watches for new containers while it’s running. You don’t have to restart Traefik or reload configuration to make a change to your application setup—that’s all part of your application deployment. Traefik has its own API and web UI that shows the rules, so you can run Traefik without any other containers and then deploy an application and see how the config gets built.</p>
+<p>To do that, Traefik check the labels you put in the other containers of your stack to handle their connection to the virtual network created by the reverse proxy.</p>
+<h2 id="traefik-configuration">Traefik configuration</h2>
+<p>To be able to have one configuration for each environment (dev, prod), we'll use the overriding and composition properties of docker-compose. That way, we have a base configuration which we can extend and override with the development or production configuration.</p>
+<h3 id="traefik-base-configuration">Traefik base configuration</h3>
+<p>The base configuration is used for :</p>
+<ul>
+<li>Defining the container,</li>
+<li>Defining the porst we will use : <code>80</code> for http, <code>443</code> for https, and <code>8080</code> for the Traefik Dashboard.</li>
+</ul>
+<p>We also tell Traefik that we will use Docker, so that the addresses it will have to redirect will comme from docker containers.</p>
+<p>The network we will use will be the network called <code>traefik-public</code>, and it will be an external one, so that other containers like our backend, frontend, will be able to connect to it.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-9-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-9-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-9-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-9-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-9-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-9-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-9-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-9-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-9-10">10</a></span>
+<span class="normal"><a href="#__codelineno-9-11">11</a></span>
+<span class="normal"><a href="#__codelineno-9-12">12</a></span>
+<span class="normal"><a href="#__codelineno-9-13">13</a></span>
+<span class="normal"><a href="#__codelineno-9-14">14</a></span>
+<span class="normal"><a href="#__codelineno-9-15">15</a></span>
+<span class="normal"><a href="#__codelineno-9-16">16</a></span>
+<span class="normal"><a href="#__codelineno-9-17">17</a></span>
+<span class="normal"><a href="#__codelineno-9-18">18</a></span>
+<span class="normal"><a href="#__codelineno-9-19">19</a></span>
+<span class="normal"><a href="#__codelineno-9-20">20</a></span>
+<span class="normal"><a href="#__codelineno-9-21">21</a></span>
+<span class="normal"><a href="#__codelineno-9-22">22</a></span>
+<span class="normal"><a href="#__codelineno-9-23">23</a></span>
+<span class="normal"><a href="#__codelineno-9-24">24</a></span>
+<span class="normal"><a href="#__codelineno-9-25">25</a></span>
+<span class="normal"><a href="#__codelineno-9-26">26</a></span>
+<span class="normal"><a href="#__codelineno-9-27">27</a></span>
+<span class="normal"><a href="#__codelineno-9-28">28</a></span>
+<span class="normal"><a href="#__codelineno-9-29">29</a></span>
+<span class="normal"><a href="#__codelineno-9-30">30</a></span>
+<span class="normal"><a href="#__codelineno-9-31">31</a></span>
+<span class="normal"><a href="#__codelineno-9-32">32</a></span>
+<span class="normal"><a href="#__codelineno-9-33">33</a></span>
+<span class="normal"><a href="#__codelineno-9-34">34</a></span>
+<span class="normal"><a href="#__codelineno-9-35">35</a></span>
+<span class="normal"><a href="#__codelineno-9-36">36</a></span>
+<span class="normal"><a href="#__codelineno-9-37">37</a></span>
+<span class="normal"><a href="#__codelineno-9-38">38</a></span>
+<span class="normal"><a href="#__codelineno-9-39">39</a></span>
+<span class="normal"><a href="#__codelineno-9-40">40</a></span>
+<span class="normal"><a href="#__codelineno-9-41">41</a></span>
+<span class="normal"><a href="#__codelineno-9-42">42</a></span>
+<span class="normal"><a href="#__codelineno-9-43">43</a></span>
+<span class="normal"><a href="#__codelineno-9-44">44</a></span>
+<span class="normal"><a href="#__codelineno-9-45">45</a></span>
+<span class="normal"><a href="#__codelineno-9-46">46</a></span>
+<span class="normal"><a href="#__codelineno-9-47">47</a></span>
+<span class="normal"><a href="#__codelineno-9-48">48</a></span>
+<span class="normal"><a href="#__codelineno-9-49">49</a></span>
+<span class="normal"><a href="#__codelineno-9-50">50</a></span>
+<span class="normal"><a href="#__codelineno-9-51">51</a></span>
+<span class="normal"><a href="#__codelineno-9-52">52</a></span>
+<span class="normal"><a href="#__codelineno-9-53">53</a></span>
+<span class="normal"><a href="#__codelineno-9-54">54</a></span>
+<span class="normal"><a href="#__codelineno-9-55">55</a></span>
+<span class="normal"><a href="#__codelineno-9-56">56</a></span>
+<span class="normal"><a href="#__codelineno-9-57">57</a></span>
+<span class="normal"><a href="#__codelineno-9-58">58</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="nn">---</span><span class="w"></span>
+<a id="__codelineno-9-2" name="__codelineno-9-2"></a><span class="nt">services</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-9-3" name="__codelineno-9-3"></a><span class="w">    </span><span class="nt">traefik</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-9-4" name="__codelineno-9-4"></a><span class="w">        </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-9-5" name="__codelineno-9-5"></a><span class="w">        </span><span class="c1"># Use the latest v2.x.x Traefik image available, check https://hub.docker.com/_/traefik?tab=tags</span><span class="w"></span>
+<a id="__codelineno-9-6" name="__codelineno-9-6"></a><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">traefik:v2.8.4</span><span class="w"></span>
+<a id="__codelineno-9-7" name="__codelineno-9-7"></a><span class="w">        </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">traefik-reverse-proxy</span><span class="w"></span>
+<a id="__codelineno-9-8" name="__codelineno-9-8"></a><span class="w">        </span><span class="nt">ports</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-9-9" name="__codelineno-9-9"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-9-10" name="__codelineno-9-10"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80:80</span><span class="w">  </span><span class="c1"># Listen on port 80, default port for HTTP, necessary to redirect to HTTPS</span><span class="w"></span>
+<a id="__codelineno-9-11" name="__codelineno-9-11"></a><span class="w">            </span><span class="c1"># port_outside:port_inside_docker_network</span><span class="w"></span>
+<a id="__codelineno-9-12" name="__codelineno-9-12"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">443:443</span><span class="w">  </span><span class="c1"># Listen on port 443, default for HTTPS</span><span class="w"></span>
+<a id="__codelineno-9-13" name="__codelineno-9-13"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080:8080</span><span class="w">  </span><span class="c1"># expose 8080 for traefik dashboard</span><span class="w"></span>
+<a id="__codelineno-9-14" name="__codelineno-9-14"></a><span class="w">        </span><span class="nt">labels</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-9-15" name="__codelineno-9-15"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-9-16" name="__codelineno-9-16"></a><span class="w">            </span><span class="nt">traefik.enable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">  </span><span class="c1"># Enable Traefik for the traefik dashboard, to make it available in the public network</span><span class="w"></span>
+<a id="__codelineno-9-17" name="__codelineno-9-17"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-9-18" name="__codelineno-9-18"></a><span class="w">            </span><span class="nt">traefik.http.services.traefik-dashboard.loadbalancer.server.port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span><span class="w">  </span><span class="c1"># Define the port inside of the Docker service to use</span><span class="w"></span>
+<a id="__codelineno-9-19" name="__codelineno-9-19"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-9-20" name="__codelineno-9-20"></a><span class="w">            </span><span class="nt">traefik.http.routers.traefik-dashboard-http.entrypoints</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span><span class="w">  </span><span class="c1"># Make Traefik use this domain in HTTP</span><span class="w"></span>
+<a id="__codelineno-9-21" name="__codelineno-9-21"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-9-22" name="__codelineno-9-22"></a><span class="w">            </span><span class="nt">traefik.docker.network</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">traefik-public</span><span class="w">  </span><span class="c1"># Use the traefik-public network (declared below)</span><span class="w"></span>
+<a id="__codelineno-9-23" name="__codelineno-9-23"></a><span class="w">        </span><span class="nt">volumes</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-9-24" name="__codelineno-9-24"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-9-25" name="__codelineno-9-25"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/run/docker.sock:/var/run/docker.sock:ro</span><span class="w">  </span><span class="c1"># Add Docker sock as a mounted volume, so that Traefik can read the labels of the other services</span><span class="w"></span>
+<a id="__codelineno-9-26" name="__codelineno-9-26"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-9-27" name="__codelineno-9-27"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">traefik-public-certificates:/certificates</span><span class="w">  </span><span class="c1"># Mount the volume (named volume) to store the certificates</span><span class="w"></span>
+<a id="__codelineno-9-28" name="__codelineno-9-28"></a><span class="w">        </span><span class="nt">command</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-9-29" name="__codelineno-9-29"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-9-30" name="__codelineno-9-30"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--providers.docker</span><span class="w">  </span><span class="c1"># Enable Docker in Traefik, so that it reads labels from Docker services</span><span class="w"></span>
+<a id="__codelineno-9-31" name="__codelineno-9-31"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-9-32" name="__codelineno-9-32"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--providers.docker.exposedbydefault=false</span><span class="w">  </span><span class="c1"># Do not expose all Docker services, only the ones explicitely exposed</span><span class="w"></span>
+<a id="__codelineno-9-33" name="__codelineno-9-33"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-9-34" name="__codelineno-9-34"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--entrypoints.http.address=:80</span><span class="w">  </span><span class="c1"># Create an entrypoint &quot;http&quot; listening on port 80</span><span class="w"></span>
+<a id="__codelineno-9-35" name="__codelineno-9-35"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--accesslog</span><span class="w">  </span><span class="c1"># Enable the access log, with HTTP requests</span><span class="w"></span>
+<a id="__codelineno-9-36" name="__codelineno-9-36"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--log</span><span class="w">  </span><span class="c1"># Enable the Traefik log, for configurations and errors</span><span class="w"></span>
+<a id="__codelineno-9-37" name="__codelineno-9-37"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--api</span><span class="w">  </span><span class="c1"># Enable the dashboard and API</span><span class="w"></span>
+<a id="__codelineno-9-38" name="__codelineno-9-38"></a><span class="w">        </span><span class="nt">networks</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-9-39" name="__codelineno-9-39"></a><span class="w">            </span><span class="c1"># Use the public network created to be shared between Traefik and</span><span class="w"></span>
+<a id="__codelineno-9-40" name="__codelineno-9-40"></a><span class="w">            </span><span class="c1"># any other service that needs to be publicly available with https</span><span class="w"></span>
+<a id="__codelineno-9-41" name="__codelineno-9-41"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">traefik-public</span><span class="w"></span>
+<a id="__codelineno-9-42" name="__codelineno-9-42"></a>
+<a id="__codelineno-9-43" name="__codelineno-9-43"></a><span class="nt">volumes</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-9-44" name="__codelineno-9-44"></a><span class="w">    </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-9-45" name="__codelineno-9-45"></a><span class="w">    </span><span class="c1"># Create a volume to store the certificates, there is a constraint to make sure</span><span class="w"></span>
+<a id="__codelineno-9-46" name="__codelineno-9-46"></a><span class="w">    </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-9-47" name="__codelineno-9-47"></a><span class="w">    </span><span class="c1"># Traefik is always deployed to the same Docker node with the same volume containing</span><span class="w"></span>
+<a id="__codelineno-9-48" name="__codelineno-9-48"></a><span class="w">    </span><span class="c1"># the HTTPS vertificates</span><span class="w"></span>
+<a id="__codelineno-9-49" name="__codelineno-9-49"></a><span class="w">    </span><span class="nt">traefik-public-certificates</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-9-50" name="__codelineno-9-50"></a>
+<a id="__codelineno-9-51" name="__codelineno-9-51"></a>
+<a id="__codelineno-9-52" name="__codelineno-9-52"></a><span class="nt">networks</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-9-53" name="__codelineno-9-53"></a><span class="w">    </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-9-54" name="__codelineno-9-54"></a><span class="w">    </span><span class="c1"># Use the previsouly created network &quot;traefik-public&quot; as an external network,</span><span class="w"></span>
+<a id="__codelineno-9-55" name="__codelineno-9-55"></a><span class="w">    </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-9-56" name="__codelineno-9-56"></a><span class="w">    </span><span class="c1"># shared with other services that needs to be publicly available wia this Traefik</span><span class="w"></span>
+<a id="__codelineno-9-57" name="__codelineno-9-57"></a><span class="w">    </span><span class="nt">traefik-public</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-9-58" name="__codelineno-9-58"></a><span class="w">        </span><span class="nt">external</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+</code></pre></div></td></tr></table></div>
+<h3 id="traefik-dev-configuration">Traefik dev configuration</h3>
+<p>The configuration in development mode adds the address of the traefik dashboard : <code>monitor.localhost</code>.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-10-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-10-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-10-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-10-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-10-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-10-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-10-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-10-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-10-10">10</a></span>
+<span class="normal"><a href="#__codelineno-10-11">11</a></span>
+<span class="normal"><a href="#__codelineno-10-12">12</a></span>
+<span class="normal"><a href="#__codelineno-10-13">13</a></span>
+<span class="normal"><a href="#__codelineno-10-14">14</a></span>
+<span class="normal"><a href="#__codelineno-10-15">15</a></span>
+<span class="normal"><a href="#__codelineno-10-16">16</a></span>
+<span class="normal"><a href="#__codelineno-10-17">17</a></span>
+<span class="normal"><a href="#__codelineno-10-18">18</a></span>
+<span class="normal"><a href="#__codelineno-10-19">19</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="nn">---</span><span class="w"></span>
+<a id="__codelineno-10-2" name="__codelineno-10-2"></a><span class="nt">services</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-10-3" name="__codelineno-10-3"></a>
+<a id="__codelineno-10-4" name="__codelineno-10-4"></a><span class="w">    </span><span class="nt">traefik</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-10-5" name="__codelineno-10-5"></a><span class="w">        </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span><span class="w"></span>
+<a id="__codelineno-10-6" name="__codelineno-10-6"></a><span class="w">        </span><span class="nt">labels</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-10-7" name="__codelineno-10-7"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-10-8" name="__codelineno-10-8"></a><span class="w">            </span><span class="nt">traefik.http.routers.traefik-dashboard-http.rule</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Host(`monitor.localhost`)</span><span class="w"></span>
+<a id="__codelineno-10-9" name="__codelineno-10-9"></a><span class="w">        </span><span class="nt">command</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-10-10" name="__codelineno-10-10"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-10-11" name="__codelineno-10-11"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--providers.docker</span><span class="w">  </span><span class="c1"># Enable Docker in Traefik, so that it reads labels from Docker services</span><span class="w"></span>
+<a id="__codelineno-10-12" name="__codelineno-10-12"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-10-13" name="__codelineno-10-13"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--providers.docker.exposedbydefault=false</span><span class="w">  </span><span class="c1"># Do not expose all Docker services, only the ones explicitely exposed</span><span class="w"></span>
+<a id="__codelineno-10-14" name="__codelineno-10-14"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-10-15" name="__codelineno-10-15"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--entrypoints.http.address=:80</span><span class="w">  </span><span class="c1"># Create an entrypoint &quot;http&quot; listening on port 80</span><span class="w"></span>
+<a id="__codelineno-10-16" name="__codelineno-10-16"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--accesslog</span><span class="w">  </span><span class="c1"># Enable the access log, with HTTP requests</span><span class="w"></span>
+<a id="__codelineno-10-17" name="__codelineno-10-17"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--log</span><span class="w">  </span><span class="c1"># Enable the Traefik log, for configurations and errors</span><span class="w"></span>
+<a id="__codelineno-10-18" name="__codelineno-10-18"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--api.insecure</span><span class="w">  </span><span class="c1"># Enable the dashboard and API</span><span class="w"></span>
+<a id="__codelineno-10-19" name="__codelineno-10-19"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--api</span><span class="w"></span>
+</code></pre></div></td></tr></table></div>
+<h3 id="traefik-prod-configuration">Traefik prod configuration</h3>
+<p>The configuration in development mode enables https.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-11-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-11-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-11-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-11-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-11-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-11-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-11-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-11-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-11-10">10</a></span>
+<span class="normal"><a href="#__codelineno-11-11">11</a></span>
+<span class="normal"><a href="#__codelineno-11-12">12</a></span>
+<span class="normal"><a href="#__codelineno-11-13">13</a></span>
+<span class="normal"><a href="#__codelineno-11-14">14</a></span>
+<span class="normal"><a href="#__codelineno-11-15">15</a></span>
+<span class="normal"><a href="#__codelineno-11-16">16</a></span>
+<span class="normal"><a href="#__codelineno-11-17">17</a></span>
+<span class="normal"><a href="#__codelineno-11-18">18</a></span>
+<span class="normal"><a href="#__codelineno-11-19">19</a></span>
+<span class="normal"><a href="#__codelineno-11-20">20</a></span>
+<span class="normal"><a href="#__codelineno-11-21">21</a></span>
+<span class="normal"><a href="#__codelineno-11-22">22</a></span>
+<span class="normal"><a href="#__codelineno-11-23">23</a></span>
+<span class="normal"><a href="#__codelineno-11-24">24</a></span>
+<span class="normal"><a href="#__codelineno-11-25">25</a></span>
+<span class="normal"><a href="#__codelineno-11-26">26</a></span>
+<span class="normal"><a href="#__codelineno-11-27">27</a></span>
+<span class="normal"><a href="#__codelineno-11-28">28</a></span>
+<span class="normal"><a href="#__codelineno-11-29">29</a></span>
+<span class="normal"><a href="#__codelineno-11-30">30</a></span>
+<span class="normal"><a href="#__codelineno-11-31">31</a></span>
+<span class="normal"><a href="#__codelineno-11-32">32</a></span>
+<span class="normal"><a href="#__codelineno-11-33">33</a></span>
+<span class="normal"><a href="#__codelineno-11-34">34</a></span>
+<span class="normal"><a href="#__codelineno-11-35">35</a></span>
+<span class="normal"><a href="#__codelineno-11-36">36</a></span>
+<span class="normal"><a href="#__codelineno-11-37">37</a></span>
+<span class="normal"><a href="#__codelineno-11-38">38</a></span>
+<span class="normal"><a href="#__codelineno-11-39">39</a></span>
+<span class="normal"><a href="#__codelineno-11-40">40</a></span>
+<span class="normal"><a href="#__codelineno-11-41">41</a></span>
+<span class="normal"><a href="#__codelineno-11-42">42</a></span>
+<span class="normal"><a href="#__codelineno-11-43">43</a></span>
+<span class="normal"><a href="#__codelineno-11-44">44</a></span>
+<span class="normal"><a href="#__codelineno-11-45">45</a></span>
+<span class="normal"><a href="#__codelineno-11-46">46</a></span>
+<span class="normal"><a href="#__codelineno-11-47">47</a></span>
+<span class="normal"><a href="#__codelineno-11-48">48</a></span>
+<span class="normal"><a href="#__codelineno-11-49">49</a></span>
+<span class="normal"><a href="#__codelineno-11-50">50</a></span>
+<span class="normal"><a href="#__codelineno-11-51">51</a></span>
+<span class="normal"><a href="#__codelineno-11-52">52</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="nn">---</span><span class="w"></span>
+<a id="__codelineno-11-2" name="__codelineno-11-2"></a><span class="nt">services</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-11-3" name="__codelineno-11-3"></a>
+<a id="__codelineno-11-4" name="__codelineno-11-4"></a><span class="w">    </span><span class="nt">traefik</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-11-5" name="__codelineno-11-5"></a><span class="w">        </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span><span class="w"></span>
+<a id="__codelineno-11-6" name="__codelineno-11-6"></a><span class="w">        </span><span class="nt">labels</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-11-7" name="__codelineno-11-7"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-11-8" name="__codelineno-11-8"></a><span class="w">            </span><span class="nt">traefik.http.routers.traefik-dashboard-http.rule</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Host(`monitor.mathieuklimczak.com`)</span><span class="w"></span>
+<a id="__codelineno-11-9" name="__codelineno-11-9"></a><span class="w">            </span><span class="c1"># Use the traefik-public network (declared below)</span><span class="w"></span>
+<a id="__codelineno-11-10" name="__codelineno-11-10"></a><span class="w">            </span><span class="c1"># HTTPS</span><span class="w"></span>
+<a id="__codelineno-11-11" name="__codelineno-11-11"></a><span class="w">            </span><span class="c1"># Use https</span><span class="w"></span>
+<a id="__codelineno-11-12" name="__codelineno-11-12"></a><span class="w">            </span><span class="nt">traefik.http.routers.traefik-dashboard-https.entrypoints</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https</span><span class="w"></span>
+<a id="__codelineno-11-13" name="__codelineno-11-13"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-11-14" name="__codelineno-11-14"></a><span class="w">            </span><span class="nt">traefik.http.routers.traefik-dashboard-https.rule</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Host(`monitor.mathieuklimczak.com`)</span><span class="w"></span>
+<a id="__codelineno-11-15" name="__codelineno-11-15"></a><span class="w">            </span><span class="nt">traefik.http.routers.traefik-dashboard-https.tls</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<a id="__codelineno-11-16" name="__codelineno-11-16"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-11-17" name="__codelineno-11-17"></a><span class="w">            </span><span class="nt">traefik.http.routers.traefik-dashboard-https.tls.certresolver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">le</span><span class="w">  </span><span class="c1"># Use the &quot;le&quot; (Let&#39;s Encrypt) resolver created below</span><span class="w"></span>
+<a id="__codelineno-11-18" name="__codelineno-11-18"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-11-19" name="__codelineno-11-19"></a><span class="w">            </span><span class="nt">traefik.http.routers.traefik-dashboard-https.service</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api@internal</span><span class="w">  </span><span class="c1"># Use the special Traefik service api@internal with the web UI/dashboard</span><span class="w"></span>
+<a id="__codelineno-11-20" name="__codelineno-11-20"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-11-21" name="__codelineno-11-21"></a><span class="w">            </span><span class="nt">traefik.http.middlewares.https-redirect.redirectscheme.scheme</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https</span><span class="w">  </span><span class="c1"># https-redirect middleware to redirect HTTP to HTTPS</span><span class="w"></span>
+<a id="__codelineno-11-22" name="__codelineno-11-22"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-11-23" name="__codelineno-11-23"></a><span class="w">            </span><span class="nt">traefik.http.middlewares.https-redirect.redirectscheme.permanent</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<a id="__codelineno-11-24" name="__codelineno-11-24"></a><span class="w">            </span><span class="c1"># Middlerware to redirect HTTP to HTTPS</span><span class="w"></span>
+<a id="__codelineno-11-25" name="__codelineno-11-25"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-11-26" name="__codelineno-11-26"></a><span class="w">            </span><span class="c1"># Anything that happend to our app on HTTP will be redirect by the middlerware</span><span class="w"></span>
+<a id="__codelineno-11-27" name="__codelineno-11-27"></a><span class="w">            </span><span class="c1"># above on HTTPS</span><span class="w"></span>
+<a id="__codelineno-11-28" name="__codelineno-11-28"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-11-29" name="__codelineno-11-29"></a><span class="w">            </span><span class="nt">traefik.http.routers.traefik-dashboard-http.middlewares</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https-redirect</span><span class="w"></span>
+<a id="__codelineno-11-30" name="__codelineno-11-30"></a><span class="w">            </span><span class="c1"># admin-auth middleware with HTTP basic auth</span><span class="w"></span>
+<a id="__codelineno-11-31" name="__codelineno-11-31"></a><span class="w">            </span><span class="c1"># Using the env variables USERNAME and HASHED_PASSWORD</span><span class="w"></span>
+<a id="__codelineno-11-32" name="__codelineno-11-32"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-11-33" name="__codelineno-11-33"></a><span class="w">            </span><span class="nt">traefik.http.middlewares.admin-auth.basicauth.users</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${USERNAME}:${HASHED_PASSWORD}</span><span class="w">  </span><span class="c1"># Enable HTTP Basic auth, using the middleware created above</span><span class="w"></span>
+<a id="__codelineno-11-34" name="__codelineno-11-34"></a><span class="w">            </span><span class="nt">traefik.http.routers.traefik-dashboard-https.middlewares</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin-auth</span><span class="w"></span>
+<a id="__codelineno-11-35" name="__codelineno-11-35"></a><span class="w">        </span><span class="nt">command</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-11-36" name="__codelineno-11-36"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-11-37" name="__codelineno-11-37"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--providers.docker</span><span class="w">  </span><span class="c1"># Enable Docker in Traefik, so that it reads labels from Docker services</span><span class="w"></span>
+<a id="__codelineno-11-38" name="__codelineno-11-38"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-11-39" name="__codelineno-11-39"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--providers.docker.exposedbydefault=false</span><span class="w">  </span><span class="c1"># Do not expose all Docker services, only the ones explicitely exposed</span><span class="w"></span>
+<a id="__codelineno-11-40" name="__codelineno-11-40"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-11-41" name="__codelineno-11-41"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--entrypoints.http.address=:80</span><span class="w">  </span><span class="c1"># Create an entrypoint &quot;http&quot; listening on port 80</span><span class="w"></span>
+<a id="__codelineno-11-42" name="__codelineno-11-42"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-11-43" name="__codelineno-11-43"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--entrypoints.https.address=:443</span><span class="w">  </span><span class="c1"># Create an entrypoint &quot;https&quot; listening on port 443</span><span class="w"></span>
+<a id="__codelineno-11-44" name="__codelineno-11-44"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-11-45" name="__codelineno-11-45"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--certificatesresolvers.le.acme.email=klimczak.mathieu@pm.me</span><span class="w">  </span><span class="c1"># Create the certificate resolver &quot;le&quot; for Let&#39;s Encrypt, uses the environment variable EMAIL</span><span class="w"></span>
+<a id="__codelineno-11-46" name="__codelineno-11-46"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-11-47" name="__codelineno-11-47"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--certificatesresolvers.le.acme.storage=/certificates/acme.json</span><span class="w">  </span><span class="c1"># Store the Let&#39;s Encrypt certificates in the mounted volume</span><span class="w"></span>
+<a id="__codelineno-11-48" name="__codelineno-11-48"></a><span class="w">            </span><span class="c1"># yamllint disable-line rule:line-length</span><span class="w"></span>
+<a id="__codelineno-11-49" name="__codelineno-11-49"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--certificatesresolvers.le.acme.tlschallenge=true</span><span class="w">  </span><span class="c1"># Use the TLS Challenge for Let&#39;s Encrypt</span><span class="w"></span>
+<a id="__codelineno-11-50" name="__codelineno-11-50"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--accesslog</span><span class="w">  </span><span class="c1"># Enable the access log, with HTTP requests</span><span class="w"></span>
+<a id="__codelineno-11-51" name="__codelineno-11-51"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--log</span><span class="w">  </span><span class="c1"># Enable the Traefik log, for configurations and errors</span><span class="w"></span>
+<a id="__codelineno-11-52" name="__codelineno-11-52"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--api</span><span class="w">  </span><span class="c1"># Enable the dashboard and API</span><span class="w"></span>
+</code></pre></div></td></tr></table></div>
+<h2 id="caddy2">Caddy2</h2>
+
+
+
+
+              
+            </article>
+            
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Retour en haut de la page
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
+      
+        
+        <a href="../deploy/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: CI-CD" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Précédent
+              </span>
+              CI-CD
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../api/" class="md-footer__link md-footer__link--next" aria-label="Suivant: FastAPI and Gunicorn" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Suivant
+              </span>
+              FastAPI and Gunicorn
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tabs", "navigation.top", "navigation.tabs.sticky"], "search": "../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.config.lang": "fr", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Rechercher", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version.title": "S\u00e9lectionner la version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.2ab50757.min.js"></script>
+      
+        <script src="../javascripts/config.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
