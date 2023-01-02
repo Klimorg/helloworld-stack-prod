@@ -1,4 +1,4 @@
 arrow==1.2.3
-pydantic==1.9.1
+pydantic==1.10.4
 requests==2.27.1
 streamlit==1.12.2
