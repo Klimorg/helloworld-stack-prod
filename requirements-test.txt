@@ -1,6 +1,6 @@
 bandit==1.7.4
 # unit tests
-pytest==7.1.1
+pytest==7.2.1
 pytest-cov==3.0.0
 pytest-github-actions-annotate-failures==0.1.7
 pytest-xdist==2.5.0
