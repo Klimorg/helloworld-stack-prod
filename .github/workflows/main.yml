@@ -88,7 +88,7 @@ jobs:
 
             - name: Build and push
               id: docker_build_api
-              uses: docker/build-push-action@v3
+              uses: docker/build-push-action@v4
               with:
                   file: Dockerfile.backend
                   # push new image only if on main branch
@@ -102,7 +102,7 @@ jobs:
 
             - name: Build and push
               id: docker_build_ui
-              uses: docker/build-push-action@v3
+              uses: docker/build-push-action@v4
               with:
                   file: Dockerfile.frontend
                   # push new image only if on main branch
